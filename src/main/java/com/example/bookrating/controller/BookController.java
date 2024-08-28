@@ -39,12 +39,12 @@ public class BookController {
            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
        }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
     }
 
     @PatchMapping("/books/{id}")
     public ResponseEntity<?> patchBook(@PathVariable Long id,@RequestBody String title) {
-        Optional<Book> findBook = bookService.getBook(id);
+        Optional<Book> findBook = bookService.getBookById(id);
         if (findBook.isEmpty()){
             return  ResponseEntity.badRequest().body("존재하지 않는 책입니다");
         }

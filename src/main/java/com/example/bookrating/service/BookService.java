@@ -41,13 +41,17 @@ public class BookService {
         return false;
     }
 
-    public Optional<Book> getBook(Long id) {
+    public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
+    }
+
+    public Optional<Book> getBookByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn);
     }
 
     public Optional<Book> patchBook(Book book,String title){
         book.setTitle(title);
         bookRepository.save(book);
-        return getBook(book.getId());
+        return getBookById(book.getId());
     }
 }

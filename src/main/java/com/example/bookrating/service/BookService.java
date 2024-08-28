@@ -6,6 +6,8 @@ import com.example.bookrating.repository.BookRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class BookService {
@@ -15,6 +17,12 @@ public class BookService {
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
+
+    public List<Book> getBooks () {
+        return bookRepository.findAll();
+    }
+
+
 
     public boolean postBook(BookDTO bookDTO) {
         Book book = new Book();

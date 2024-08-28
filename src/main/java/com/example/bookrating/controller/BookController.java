@@ -6,9 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class BookController {
@@ -20,6 +23,11 @@ public class BookController {
         this.bookService = bookService;
     }
 
+
+    @GetMapping("/books")
+    public ResponseEntity<?> getBooks() {
+        return  ResponseEntity.ok().body(bookService.getBooks());
+    }
 
     @PostMapping("/book")
     public ResponseEntity<?> postBook(@ModelAttribute BookDTO bookDTO) {

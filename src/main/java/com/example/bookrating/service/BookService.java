@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,5 +39,15 @@ public class BookService {
         log.info("책 저장 완료!");
     }
         return false;
+    }
+
+    public Optional<Book> getBook(Long id) {
+        return bookRepository.findById(id);
+    }
+
+    public Optional<Book> patchBook(Book book,String title){
+        book.setTitle(title);
+        bookRepository.save(book);
+        return getBook(book.getId());
     }
 }

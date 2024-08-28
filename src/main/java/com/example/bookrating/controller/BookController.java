@@ -52,4 +52,12 @@ public class BookController {
         return ResponseEntity.ok(). body(bookService.patchBook(findBook.get(),title));
     }
 
+    @DeleteMapping("/books/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        if (bookService.deleteBook(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().body("존재하지 않는 책입니다.");
+    }
+
 }

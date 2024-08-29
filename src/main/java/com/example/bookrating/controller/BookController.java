@@ -5,6 +5,7 @@ import com.example.bookrating.entity.Book;
 import com.example.bookrating.service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,9 @@ import java.util.Optional;
 public class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
-    private final BookService bookService;
 
-    //TODO 오토로 바꾸기
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
-
+    @Autowired
+    BookService bookService;
 
     @GetMapping("/books")
     public ResponseEntity<List<Book>> getBooks() {
@@ -34,12 +31,11 @@ public class BookController {
         log.info("getIsbn : {}",bookDTO.getIsbn());
         log.info("getTitle : {}",bookDTO.getTitle());
 
-        boolean isBook =  bookService.postBook(bookDTO);
+        if (bookService.isDuplicateBook(bookDTO.getIsbn())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
+        }
 
-       if (isBook){
-           return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
-       }
-
+        bookService.postBook(bookDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
     }
 
@@ -55,10 +51,10 @@ public class BookController {
 
     @DeleteMapping("/books/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id) {
-        if (bookService.deleteBook(id)) {
-            return ResponseEntity.noContent().build();
+        if (bookService.getBookById(id).isPresent()){
+            bookService.deleteBook(id);
+            return  ResponseEntity.noContent().build();
         }
         return ResponseEntity.badRequest().body("존재하지 않는 책입니다.");
     }
-
 }

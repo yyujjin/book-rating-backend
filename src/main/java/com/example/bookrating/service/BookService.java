@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+// TODO 추가, 추가_중복체크, 수정, 삭제 테스트 코드 작성하기
+// 작성법 모르겠음 스프링 입문 강의 참고
 @Slf4j
 @Service
 public class BookService {
 
     private final BookRepository bookRepository;
 
+    // TODO: Auto
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
@@ -24,7 +27,7 @@ public class BookService {
     }
 
 
-
+    // TODO 함수는 하나의 일만 해야 함. 중복 체크하는 함수와 책 저장하는 함수 분리
     public boolean postBook(BookDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
@@ -55,6 +58,7 @@ public class BookService {
         return getBookById(book.getId());
     }
 
+    // TODO 한가지 일만 하도록 함수 분리
     public boolean deleteBook(Long id) {
 
         if (bookRepository.findById(id).isPresent()){

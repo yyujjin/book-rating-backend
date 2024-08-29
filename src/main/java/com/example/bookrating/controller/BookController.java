@@ -18,13 +18,14 @@ public class BookController {
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService bookService;
 
+    //TODO 오토로 바꾸기
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
 
     @GetMapping("/books")
-    public ResponseEntity<?> getBooks() {
+    public ResponseEntity<List<Book>> getBooks() {
         return  ResponseEntity.ok().body(bookService.getBooks());
     }
 

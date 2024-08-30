@@ -55,8 +55,7 @@ public class BookService {
     //책 정보 수정
     public Optional<Book> patchBook(Book book,String title){
         book.setTitle(title);
-        bookRepository.save(book);
-        return getBookById(book.getId());
+        return Optional.of(bookRepository.save(book));
     }
 
     //책 삭제
@@ -64,3 +63,4 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 }
+

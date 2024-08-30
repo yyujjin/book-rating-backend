@@ -45,8 +45,10 @@ public class BookController {
         if (findBook.isEmpty()){
             return  ResponseEntity.badRequest().body("존재하지 않는 책입니다");
         }
-        bookService.patchBook(findBook.get(),title);
-        return ResponseEntity.ok(). body(bookService.patchBook(findBook.get(),title));
+
+        Optional<Book> modifiedBook =  bookService.patchBook(findBook.get(),title);
+
+        return ResponseEntity.ok(). body(modifiedBook);
     }
 
     @DeleteMapping("/books/{id}")

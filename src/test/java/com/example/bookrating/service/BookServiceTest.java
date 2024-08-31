@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.*;
@@ -86,5 +87,18 @@ public class BookServiceTest {
         bookService.patchBook(book,title);
         //then
         assertEquals("책 제목 변경 됨","아따맘마","아따맘마");
+    }
+
+    @Test
+    public void 책_삭제(){
+        //id가 올바르게 전달되는지 테스트
+        //given
+        Long id = 1L;
+
+        //when
+        bookService.deleteBook(id);
+
+        //then
+        verify(bookRepository).deleteById(anyLong());
     }
 }

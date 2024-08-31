@@ -73,4 +73,18 @@ public class BookServiceTest {
         //any(Book.class) : 동일한 인스턴스의 필요 없이 특정 타입에 대한 메서드 호출을 허용하고 검증할 수 있는 유연한 방법
     }
 
+
+    @Test
+    public void 책_수정(){
+        //givne
+        Book book = new Book(12L,"1111","신의괴도잔느");
+        String title = "아따맘마";
+
+        when(bookRepository.save(book)).thenReturn(book);
+
+        //when
+        bookService.patchBook(book,title);
+        //then
+        assertEquals("책 제목 변경 됨","아따맘마","아따맘마");
+    }
 }

@@ -57,4 +57,8 @@ public class ReviewService {
         //수정된 리뷰 또는 빈 Optional 반환
        return review;
     }
+
+    public void deleteReview(Long reviewId) {
+        reviewRepository.deleteById(reviewId);
+    }
 }

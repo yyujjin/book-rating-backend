@@ -1,8 +1,10 @@
 package com.example.bookrating.controller;
 
 import com.example.bookrating.entity.Review;
+import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,6 +15,9 @@ public class ReviewController {
 
     @Autowired
     ReviewService reviewService;
+
+    @Autowired
+    BookService bookService;
 
     @GetMapping("/books/{bookId}/reviews")
     public ResponseEntity<List<Review>> getReviews(@PathVariable Long bookId) {
@@ -42,4 +47,22 @@ public class ReviewController {
             return ResponseEntity.badRequest().body("존재하지 않는 리뷰입니다.");
         }
     }
+
+    @DeleteMapping("/books/{bookId}/reviews/{reviewId}")
+    public ResponseEntity<?>deleteReview(@PathVariable Long bookId,@PathVariable Long reviewId){
+        //없는 book
+        if (bookService.getBookById(bookId).isEmpty()){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("존재하지 않는 책입니다");
+        }
+
+        //없는 review
+        if (reviewService.findById(reviewId).isEmpty()){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("존재하지 않는 리뷰입니다.");
+        }
+
+        reviewService.deleteReview(reviewId);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

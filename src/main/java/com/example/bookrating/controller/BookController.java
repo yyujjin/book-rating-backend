@@ -27,7 +27,7 @@ public class BookController {
     }
 
     @PostMapping("/book")
-    public ResponseEntity<?> postBook(@ModelAttribute BookDTO bookDTO) {
+    public ResponseEntity<?> createBook(@ModelAttribute BookDTO bookDTO) {
         log.info("getIsbn : {}",bookDTO.getIsbn());
         log.info("getTitle : {}",bookDTO.getTitle());
 
@@ -35,18 +35,18 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
         }
 
-        bookService.postBook(bookDTO);
+        bookService.createBook(bookDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
     }
 
     @PatchMapping("/books/{id}")
-    public ResponseEntity<?> patchBook(@PathVariable Long id,@RequestBody String title) {
+    public ResponseEntity<?> editBook(@PathVariable Long id,@RequestBody String title) {
         Optional<Book> findBook = bookService.getBookById(id);
         if (findBook.isEmpty()){
             return  ResponseEntity.badRequest().body("존재하지 않는 책입니다");
         }
 
-        Optional<Book> modifiedBook =  bookService.patchBook(findBook.get(),title);
+        Optional<Book> modifiedBook =  bookService.editBook(findBook.get(),title);
 
         return ResponseEntity.ok(). body(modifiedBook);
     }

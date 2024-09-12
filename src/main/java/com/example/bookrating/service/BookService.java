@@ -33,7 +33,7 @@ public class BookService {
     }
 
     //책 저장
-    public void postBook(BookDTO bookDTO) {
+    public void createBook(BookDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
@@ -53,7 +53,7 @@ public class BookService {
     }
 
     //책 정보 수정
-    public Optional<Book> patchBook(Book book,String title){
+    public Optional<Book> editBook(Book book,String title){
         book.setTitle(title);
         return Optional.of(bookRepository.save(book));
     }

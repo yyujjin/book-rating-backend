@@ -14,6 +14,5 @@ public class TagService {
 
     public List<Tag> getTag() {
         return tagRepository.findAll(); //전체 데이터 가지고 오기
-
     }
 }

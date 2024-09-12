@@ -1,5 +1,6 @@
 package com.example.bookrating.dto;
 
+import com.example.bookrating.entity.Tag;
 import lombok.Data;
 import java.util.List;
 
@@ -7,5 +8,5 @@ import java.util.List;
 public class BookDTO {
     private String isbn;
     private String title;
-    private List tagIds;
+    private List<Long> tagIds;
 }

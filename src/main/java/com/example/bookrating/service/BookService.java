@@ -2,13 +2,17 @@ package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookDTO;
 import com.example.bookrating.entity.Book;
+import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
+import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 // TODO 추가, 추가_중복체크, 수정, 삭제 테스트 코드 작성하기
 // 작성법 모르겠음 스프링 입문 강의 참고
@@ -18,6 +22,9 @@ public class BookService {
 
     @Autowired
     BookRepository bookRepository;
+
+    @Autowired
+    TagRepository tagRepository;
 
     public List<Book> getBooks () {
         return bookRepository.findAll();
@@ -37,6 +44,19 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
+        //태그 아이디가 넘어오니까 그 아이디로 태그를 찾아서 태그 엔티티를 여기 넣어줘야하나?
+        // 3, 5
+        Set<Tag> tags = new HashSet<>();
+
+        for (int i=0; i<bookDTO.getTagIds().size(); i++) {
+            Optional<Tag> tag = tagRepository.findById(bookDTO.getTagIds().get(i));
+            if (tag.isPresent()) {
+
+                tags.add(tag.get());
+            }
+        }
+
+        book.setTags(tags);
 
         bookRepository.save(book);
         log.info("책 저장 완료!");

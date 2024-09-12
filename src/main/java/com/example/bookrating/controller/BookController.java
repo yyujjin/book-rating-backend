@@ -26,7 +26,7 @@ public class BookController {
         return  ResponseEntity.ok().body(bookService.getBooks());
     }
 
-    @PostMapping("/book")
+    @PostMapping("/books")
     public ResponseEntity<?> createBook(@ModelAttribute BookDTO bookDTO) {
         log.info("getIsbn : {}",bookDTO.getIsbn());
         log.info("getTitle : {}",bookDTO.getTitle());

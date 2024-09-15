@@ -1,5 +1,6 @@
 package com.example.bookrating.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,6 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
     private Set<Book> books;
 }

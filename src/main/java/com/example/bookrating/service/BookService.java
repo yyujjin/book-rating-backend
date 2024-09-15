@@ -44,15 +44,12 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
-        //태그 아이디가 넘어오니까 그 아이디로 태그를 찾아서 태그 엔티티를 여기 넣어줘야하나?
-        // 3, 5
+
         Set<Tag> tags = new HashSet<>();
 
-        for (int i=0; i<bookDTO.getTagIds().size(); i++) {
-            Optional<Tag> tag = tagRepository.findById(bookDTO.getTagIds().get(i));
-            if (tag.isPresent()) {
-
-                tags.add(tag.get());
+        if (!bookDTO.getIsbn().isEmpty()) {
+            for (int i=0; i<bookDTO.getTagIds().size(); i++) {
+               tags.add(tagRepository.findById(bookDTO.getTagIds().get(i)).get());
             }
         }
 

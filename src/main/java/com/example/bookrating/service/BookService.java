@@ -2,13 +2,17 @@ package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookDTO;
 import com.example.bookrating.entity.Book;
+import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
+import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 // TODO 추가, 추가_중복체크, 수정, 삭제 테스트 코드 작성하기
 // 작성법 모르겠음 스프링 입문 강의 참고
@@ -18,6 +22,9 @@ public class BookService {
 
     @Autowired
     BookRepository bookRepository;
+
+    @Autowired
+    TagRepository tagRepository;
 
     public List<Book> getBooks () {
         return bookRepository.findAll();
@@ -37,6 +44,16 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
+
+        Set<Tag> tags = new HashSet<>();
+
+        if (!bookDTO.getIsbn().isEmpty()) {
+            for (int i=0; i<bookDTO.getTagIds().size(); i++) {
+               tags.add(tagRepository.findById(bookDTO.getTagIds().get(i)).get());
+            }
+        }
+
+        book.setTags(tags);
 
         bookRepository.save(book);
         log.info("책 저장 완료!");

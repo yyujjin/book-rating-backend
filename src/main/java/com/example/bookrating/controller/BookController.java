@@ -26,10 +26,11 @@ public class BookController {
         return  ResponseEntity.ok().body(bookService.getBooks());
     }
 
-    @PostMapping("/book")
-    public ResponseEntity<?> createBook(@ModelAttribute BookDTO bookDTO) {
+    @PostMapping("/books")
+    public ResponseEntity<?> createBook(@RequestBody BookDTO bookDTO) {
         log.info("getIsbn : {}",bookDTO.getIsbn());
         log.info("getTitle : {}",bookDTO.getTitle());
+        log.info("getTags : {}",bookDTO.getTagIds());
 
         if (bookService.isDuplicateBook(bookDTO.getIsbn())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");

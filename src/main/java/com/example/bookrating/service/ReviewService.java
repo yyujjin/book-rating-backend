@@ -30,6 +30,7 @@ public class ReviewService {
         Optional<Book>book = bookService.getBookById(bookId);
         if (book.isEmpty()){return false;}
         review.setBook(book.get());
+        review.prePersist();
         reviewRepository.save(review);
         return true;
     }

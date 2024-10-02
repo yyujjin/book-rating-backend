@@ -4,6 +4,7 @@ import com.example.bookrating.dto.BookDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
+import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class BookService {
 
     @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    ReviewRepository reviewRepository;
 
     public List<Book> getBooks () {
         return bookRepository.findAll();
@@ -78,6 +82,12 @@ public class BookService {
     //책 삭제
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    //책 평균 값 업데이트하기
+    public void updateAverage(Book book){
+        //bookRepository.save(book);
+        bookRepository.updateAverageRating(book.getId(), book.getAverage());
     }
 }
 

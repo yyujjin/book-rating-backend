@@ -67,4 +67,20 @@ public class ReviewService {
     public List<Integer> getRatings(Long bookId){
         return reviewRepository.getRatings(bookId);
     }
+
+    //rating 평균점수 계산
+    public double calculateAverage(List<Integer> ratings){
+        int num = 0;
+        for(int rate : ratings){
+            num+= rate;
+        }
+       //소수점 2자리까지 출력
+        try {
+            return Math.round (num/ratings.size()*100) /100.0;
+        }catch(ArithmeticException e){
+            log.info("0을 나눌 수 없습니다. ");
+        };
+
+        return  0;
+    }
 }

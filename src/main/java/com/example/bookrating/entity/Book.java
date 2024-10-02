@@ -21,6 +21,8 @@ public class Book {
     private Long id;
     private String isbn;
     private String title;
+    private double rating; //외래키 설정해야하나?
+
 
     @ManyToMany
     @JoinTable(

@@ -14,5 +14,9 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
 
     @Query("SELECT r FROM Review r WHERE r.book.id = :bookId AND r.id = :id")
     Optional<Review> findContentByBookIdAndReviewId(@Param("bookId") Long bookId, @Param("id") Long id);
+
+    //rating 점수 가져오기
+    @Query("SELECT rating FROM Review r WHERE r.book.id = :bookId")
+    List<Integer> getRatings(@Param("bookId") Long bookId);
 }
 

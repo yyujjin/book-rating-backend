@@ -62,4 +62,9 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         reviewRepository.deleteById(reviewId);
     }
+
+   //rating 가져오기
+    public List<Integer> getRatings(Long bookId){
+        return reviewRepository.getRatings(bookId);
+    }
 }

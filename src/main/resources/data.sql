@@ -1,4 +1,4 @@
-INSERT INTO book (isbn, title,rating) VALUES
+INSERT INTO book (isbn, title,average) VALUES
 ('9780060935467', 'To Kill a Mockingbird',0),
 ('9780451524935', '1984',0),
 ('9780141439518', 'Pride and Prejudice',0),

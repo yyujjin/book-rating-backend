@@ -1,6 +1,5 @@
 package com.example.bookrating.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,7 @@ public class Book {
     private Long id;
     private String isbn;
     private String title;
-    private double rating; //외래키 설정해야하나?
+    private double average; //외래키 설정해야하나?
 
 
     @ManyToMany

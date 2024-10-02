@@ -20,7 +20,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private String rating;
+    private int rating;
     private LocalDateTime updatedAt;
     @ManyToOne
     @JoinColumn(name = "book_id")  // 외래키 이름을 'bookId'로 설정

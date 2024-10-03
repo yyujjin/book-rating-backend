@@ -31,8 +31,7 @@ public class BookController {
         List<Book>  bookList = bookService.getBooks();
 
         for (Book book :  bookList){
-            book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
-            bookService.updateAverage(book);
+            book.setRating( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
         }
 
         return  ResponseEntity.ok().body(bookService.getBooks());

@@ -25,8 +25,9 @@ public class ReviewController {
     }
 
     @PostMapping("/books/{bookId}/reviews")
-    public ResponseEntity<?>postReview(@PathVariable Long bookId, @ModelAttribute Review review){
-        boolean isReviewPosted = reviewService.postReview(bookId,review);
+    public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody Review review){
+        //public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody ReviewDTO reviewDTO){
+       boolean isReviewPosted = reviewService.postReview(bookId,review);
 
        if (!isReviewPosted) return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");
 

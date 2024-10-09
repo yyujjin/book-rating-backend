@@ -31,9 +31,9 @@ INSERT INTO book_tag (book_id, tag_id) VALUES
 (6, 5),  -- 'The Hobbit'에 'Fantasy' 태그를 연결
 (6, 9);  -- 'The Hobbit'에 'Young Adult' 태그를 연결
 
---INSERT INTO review (book_id, rating, review_text) VALUES
---(1, 5, 'Amazing book! A must-read for everyone.'),
---(1, 4, 'Really enjoyed the depth of the characters and the storyline.'),
---(1, 3, 'It was good, but the pacing was a bit slow for my taste.'),
---(2, 2, 'Not what I expected. The plot was predictable.'),
---(2, 1, 'Did not enjoy the book. Found it quite boring.');
+INSERT INTO review (book_id, rating, content) VALUES
+(1, 5, 'Amazing book! A must-read for everyone.'),
+(1, 4, 'Really enjoyed the depth of the characters and the storyline.'),
+(1, 3, 'It was good, but the pacing was a bit slow for my taste.'),
+(2, 2, 'Not what I expected. The plot was predictable.'),
+(2, 1, 'Did not enjoy the book. Found it quite boring.');

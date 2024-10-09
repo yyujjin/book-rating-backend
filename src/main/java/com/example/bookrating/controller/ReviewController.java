@@ -33,6 +33,7 @@ public class ReviewController {
 
        if (review.getRating()>5) return ResponseEntity.badRequest().body("5이하의 별점만 가능합니다.");
 
+
         return ResponseEntity.ok().body("리뷰가 등록되었습니다.");
     }
 

@@ -1,6 +1,7 @@
 package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
+import com.example.bookrating.dto.ReviewListDTO;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,7 +21,7 @@ public class ReviewController {
     BookService bookService;
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ReviewDTO> getReviews(@PathVariable Long bookId) {
+    public ResponseEntity<ReviewListDTO> getReviews(@PathVariable Long bookId) {
       return ResponseEntity.ok().body(reviewService.getReviews(bookId));
     }
 

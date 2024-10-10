@@ -1,11 +1,13 @@
 package com.example.bookrating.service;
 
 import com.example.bookrating.dto.ReviewDTO;
+import com.example.bookrating.dto.ReviewListDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +23,20 @@ public class ReviewService {
         this.bookService = bookService;
     }
 
-    public ReviewDTO getReviews(Long bookId){
+    public ReviewListDTO getReviews(Long bookId){
 
-        ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setReviews(reviewRepository.findByBookId(bookId));
-        reviewDTO.setAverage(calculateAverage(getRatings(bookId)));
-        return reviewDTO;
+        ReviewListDTO reviewListDTO = new ReviewListDTO();
+        List<ReviewDTO> reviewDTOList = new ArrayList<>();
+
+        List<Review> reviewList= reviewRepository.findByBookId(bookId);
+        for (Review review : reviewList ){
+            ReviewDTO dto = new ReviewDTO(review.getId(), review.getRating(),review.getContent(),review.getUpdatedAt());
+            reviewDTOList.add(dto);
+        }
+        reviewListDTO.setReviewDTOList(reviewDTOList);
+        reviewListDTO.setAverage(calculateAverage(getRatings(bookId)));
+
+        return reviewListDTO;
     }
 
     public boolean postReview(Long bookId, Review review){

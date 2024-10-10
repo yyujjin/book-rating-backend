@@ -1,5 +1,6 @@
 package com.example.bookrating.service;
 
+import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.ReviewRepository;
@@ -21,6 +22,13 @@ public class ReviewService {
     }
 
     public List<Review>getReviews(Long bookId){
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        //리뷰 리스트 dto에 담았고
+        reviewDTO.setReviews(reviewRepository.findByBookId(bookId));
+        //평균값도 구해서 dto에 담기
+
+
         log.info("넘어온 값 : {}",reviewRepository.findByBookId(bookId));
         return reviewRepository.findByBookId(bookId);
     }

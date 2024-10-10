@@ -31,4 +31,15 @@ public class Book {
     )
     @JsonManagedReference
     private Set<Tag> tags;
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", isbn='" + isbn + '\'' +
+                ", title='" + title + '\'' +
+                ", average=" + average +
+                ", tags=" + tags +
+                '}';
+    }
 }

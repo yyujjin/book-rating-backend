@@ -35,4 +35,15 @@ public class Review {
     public void preUpdate() {
         this.updatedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
     }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", rating=" + rating +
+                ", updatedAt=" + updatedAt +
+                ", book=" + book +
+                '}';
+    }
 }

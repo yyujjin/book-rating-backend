@@ -27,6 +27,8 @@ public class BookService {
     TagRepository tagRepository;
 
     public List<Book> getBooks () {
+
+        log.info("가져옴:{}",bookRepository.findAll());
         return bookRepository.findAll();
     }
 

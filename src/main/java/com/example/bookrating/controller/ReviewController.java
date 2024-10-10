@@ -1,5 +1,6 @@
 package com.example.bookrating.controller;
 
+import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
@@ -20,8 +21,8 @@ public class ReviewController {
     BookService bookService;
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<List<Review>> getReviews(@PathVariable Long bookId) {
-        return ResponseEntity.ok().body(reviewService.getReviews(bookId));
+    public ResponseEntity<ReviewDTO> getReviews(@PathVariable Long bookId) {
+      return ResponseEntity.ok().body(reviewService.getReviews(bookId));
     }
 
     @PostMapping("/books/{bookId}/reviews")

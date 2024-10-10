@@ -21,16 +21,12 @@ public class ReviewService {
         this.bookService = bookService;
     }
 
-    public List<Review>getReviews(Long bookId){
+    public ReviewDTO getReviews(Long bookId){
 
         ReviewDTO reviewDTO = new ReviewDTO();
-        //리뷰 리스트 dto에 담았고
         reviewDTO.setReviews(reviewRepository.findByBookId(bookId));
-        //평균값도 구해서 dto에 담기
-
-
-        log.info("넘어온 값 : {}",reviewRepository.findByBookId(bookId));
-        return reviewRepository.findByBookId(bookId);
+        reviewDTO.setAverage(calculateAverage(getRatings(bookId)));
+        return reviewDTO;
     }
 
     public boolean postReview(Long bookId, Review review){

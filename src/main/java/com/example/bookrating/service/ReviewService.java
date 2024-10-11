@@ -8,6 +8,7 @@ import com.example.bookrating.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class ReviewService {
             ReviewDTO dto = new ReviewDTO(review.getId(), review.getRating(),review.getContent(),review.getUpdatedAt());
             reviewDTOList.add(dto);
         }
+        Collections.reverse(reviewDTOList);
         reviewListDTO.setReviewDTOList(reviewDTOList);
         reviewListDTO.setAverage(calculateAverage(getRatings(bookId)));
 

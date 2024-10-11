@@ -20,7 +20,7 @@ public class Book {
     private Long id;
     private String isbn;
     private String title;
-    private double averageRating; //외래키 설정해야하나?
+    private double average; //외래키 설정해야하나?
 
 
     @ManyToMany
@@ -38,7 +38,7 @@ public class Book {
                 "id=" + id +
                 ", isbn='" + isbn + '\'' +
                 ", title='" + title + '\'' +
-                ", average=" + averageRating +
+                ", average=" + average +
                 ", tags=" + tags +
                 '}';
     }

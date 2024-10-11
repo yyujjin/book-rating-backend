@@ -36,7 +36,7 @@ public class ReviewService {
         }
         Collections.reverse(reviewDTOList);
         reviewListDTO.setReviews(reviewDTOList);
-        reviewListDTO.setAverage(calculateAverage(getRatings(bookId)));
+        reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
 
         return reviewListDTO;
     }

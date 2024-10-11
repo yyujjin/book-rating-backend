@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 public class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);

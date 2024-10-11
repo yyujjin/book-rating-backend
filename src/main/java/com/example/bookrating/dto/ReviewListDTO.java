@@ -5,6 +5,6 @@ import java.util.List;
 
 @Data
 public class ReviewListDTO {
-    private List<ReviewDTO> reviewDTOList;
+    private List<ReviewDTO> reviews;
     private double average;
 }

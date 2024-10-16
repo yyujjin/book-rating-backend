@@ -20,7 +20,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login").permitAll() //메인, 로그인, 회원가입
+                .requestMatchers("/", "/login").permitAll() //메인, 로그인
                 .anyRequest().authenticated()
         );
 

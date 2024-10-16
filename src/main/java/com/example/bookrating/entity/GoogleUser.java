@@ -21,5 +21,5 @@ public class GoogleUser {
     private String email;
     private String role;
     private LocalDateTime registerDate;
-    private Long RegistrationId;
+    private String RegistrationId;
 }

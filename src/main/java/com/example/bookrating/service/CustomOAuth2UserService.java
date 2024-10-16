@@ -1,7 +1,6 @@
 package com.example.bookrating.service;
 
 import com.example.bookrating.dto.GoogleResponseDTO;
-import com.example.bookrating.dto.GoogleUserDTO;
 import com.example.bookrating.entity.GoogleUser;
 import com.example.bookrating.repository.GoogleUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,18 +30,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        //TODO:업데이트하기
+        //TODO:업데이트로직은 나중에 추가하기
 
-        int index = googleResponseDTO.getEmail().indexOf("@");
-        String userId = googleResponseDTO.getEmail().substring(0, index);
+        if(findRegistrationId(registrationId).isEmpty()){
+            int index = googleResponseDTO.getEmail().indexOf("@");
+            String userId = googleResponseDTO.getEmail().substring(0, index);
 
-        googleUser.setUserId(userId);
-        googleUser.setName(googleResponseDTO.getName());
-        googleUser.setEmail(googleResponseDTO.getEmail());
-        googleUser.setRole("ROLE_USER");
-        googleUser.setRegistrationId(googleResponseDTO.getProviderId());
-        googleUserRepository.save(googleUser);
-
+            googleUser.setUserId(userId);
+            googleUser.setName(googleResponseDTO.getName());
+            googleUser.setEmail(googleResponseDTO.getEmail());
+            googleUser.setRole("ROLE_USER");
+            googleUser.setRegistrationId(googleResponseDTO.getProviderId());
+            googleUserRepository.save(googleUser);
+        }
         return oAuth2User;
     }
+
+    //registrationId로 DB에서 기존 유저인지 찾기
+    public String findRegistrationId(String registrationId){
+        return googleUserRepository.getRegistrationId(registrationId);
+    };
 }

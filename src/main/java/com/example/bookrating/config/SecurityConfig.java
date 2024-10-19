@@ -42,12 +42,20 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfoEndpointConfig ->userInfoEndpointConfig
                                 .userService(customOAuth2UserService))));
 
-
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/","/login").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/","/login","/oauth2/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:3000", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
+                        .failureUrl("http://localhost:3000/login?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("http://localhost:3000") // 로그아웃 후 리다이렉트될 프론트엔드 경로
+                        .invalidateHttpSession(true) // 세션 무효화
+                );
 
         //세션 설정 : STATELESS
         http

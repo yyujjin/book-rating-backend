@@ -1,5 +1,6 @@
 package com.example.bookrating.controller;
 
+import com.example.bookrating.service.UserSessionService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.IOException;
@@ -25,6 +26,12 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    private final UserSessionService userSessionService;
+
+    public CustomLogInSuccessHandler(UserSessionService userSessionService) {
+        this.userSessionService = userSessionService;
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, java.io.IOException {
 
@@ -32,6 +39,10 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
         String token = Jwts.builder()
                 .setSubject(authentication.getName()) // 사용자 정보
                 .claim("authorities", authentication.getAuthorities()) // 권한 정보
+                //.claim("id",)
+                .claim("username", userSessionService.getUserName())
+                .claim("email", userSessionService.getUserEmail())
+                .claim("avatar", userSessionService.getAvatar())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
                 .signWith(SignatureAlgorithm.HS256, jwtSecret) // 서명 알고리즘

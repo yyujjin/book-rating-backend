@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class UserController {
 
-    @PostMapping("/login")
+    @PostMapping("/loginInfo")
     public ResponseEntity<LoginDTO> login(){
         LoginDTO loginDTO = new LoginDTO();
         UserDTO userDTO = new UserDTO();

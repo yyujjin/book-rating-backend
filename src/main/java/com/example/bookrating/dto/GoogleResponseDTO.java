@@ -34,4 +34,8 @@ public class GoogleResponseDTO {
 
         return attribute.get("name").toString();
     }
+
+    public String getPicture(){
+        return attribute.get("picture").toString();
+    }
 }

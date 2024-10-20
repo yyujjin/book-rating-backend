@@ -43,4 +43,10 @@ private final UserDTO userDTO;
     public  String getUsername(){
         return userDTO.getUserName();
     }
+
+    //유저 이메일
+    public String getUserEmail(){return userDTO.getEmail();}
+
+    //유저 프로필 사진
+    public String getAvatar(){return userDTO.getAvatar();}
 }

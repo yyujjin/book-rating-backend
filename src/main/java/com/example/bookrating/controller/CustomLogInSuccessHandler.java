@@ -25,8 +25,6 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final String secretKey = jwtSecret;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, java.io.IOException {
 
@@ -36,7 +34,7 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
                 .claim("authorities", authentication.getAuthorities()) // 권한 정보
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
-                .signWith(SignatureAlgorithm.HS256, secretKey) // 서명 알고리즘
+                .signWith(SignatureAlgorithm.HS256, jwtSecret) // 서명 알고리즘
                 .compact();
 
         // JWT를 HttpOnly 쿠키에 저장

@@ -22,7 +22,7 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    @Value("${ jwt.secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     private final String secretKey = jwtSecret;

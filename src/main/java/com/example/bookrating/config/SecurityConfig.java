@@ -49,8 +49,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:3000", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
-                        .failureUrl("http://localhost:3000/login?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
+                        .defaultSuccessUrl("http://localhost:3001/loginSuccess)", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
+                        .failureUrl("http://localhost:3001/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("http://localhost:3000") // 로그아웃 후 리다이렉트될 프론트엔드 경로

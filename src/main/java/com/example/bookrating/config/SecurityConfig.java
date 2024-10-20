@@ -1,9 +1,10 @@
 package com.example.bookrating.config;
 
+import com.example.bookrating.controller.CustomLogInSuccessHandler;
 import com.example.bookrating.service.CustomOAuth2UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,10 +14,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+    // application.properties 또는 .env 파일에서 FRONTEND_URL 값을 가져옴
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomLogInSuccessHandler customLogInSuccessHandler;
+
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler) {
         this.customOAuth2UserService = customOAuth2UserService;
+        this.customLogInSuccessHandler = customLogInSuccessHandler;
     }
 
 
@@ -49,11 +58,13 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("http://localhost:3000/loginSuccess)", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
-                        .failureUrl("http://localhost:3000/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
+                        .defaultSuccessUrl(frontendUrl+"/loginSuccess)", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
+                        .failureUrl(frontendUrl+"/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
+                        .successHandler(customLogInSuccessHandler)
+
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:3000") // 로그아웃 후 리다이렉트될 프론트엔드 경로
+                        .logoutSuccessUrl(frontendUrl) // 로그아웃 후 리다이렉트될 프론트엔드 경로
                         .invalidateHttpSession(true) // 세션 무효화
                 );
 

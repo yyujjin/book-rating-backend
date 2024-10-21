@@ -17,7 +17,7 @@ import java.util.Set;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //id가 원래는 null이었다가 추가되면 id가 만들어지기에 final은 붙이지 않는다.
+    private Long id;
     private String name;
 
     @ManyToMany(mappedBy = "tags")

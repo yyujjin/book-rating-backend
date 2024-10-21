@@ -19,7 +19,6 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomLogInSuccessHandler customLogInSuccessHandler;
 
@@ -27,8 +26,6 @@ public class SecurityConfig {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customLogInSuccessHandler = customLogInSuccessHandler;
     }
-
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

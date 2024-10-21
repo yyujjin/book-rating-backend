@@ -28,14 +28,11 @@ public class BookController {
 
     @GetMapping("/books")
     public ResponseEntity<List<Book>> getBooks() {
-
-        //todo: dto로 변경해서 고치기
         List<Book>  bookList = bookService.getBooks();
 
         for (Book book :  bookList){
             book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
         }
-
         return  ResponseEntity.ok().body(bookService.getBooks());
     }
 

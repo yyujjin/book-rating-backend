@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserSessionService {
 
-
-
-
     // 현재 로그인한 사용자의 아이디를 반환
     public String getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

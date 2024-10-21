@@ -52,7 +52,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/","/login","/oauth2/**","/books","/reviews","/books/*/reviews").permitAll()
+                        .requestMatchers("/books","/books/{bookId}/reviews","/tags").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2

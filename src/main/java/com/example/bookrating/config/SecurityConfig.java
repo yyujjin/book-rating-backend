@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -63,7 +64,8 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl(frontendUrl) // 로그아웃 후 리다이렉트될 프론트엔드 경로
                         .invalidateHttpSession(true) // 세션 무효화
-                );
+                )
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         //세션 설정 : STATELESS
         http

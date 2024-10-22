@@ -1,6 +1,7 @@
 package com.example.bookrating.config;
 
 import com.example.bookrating.controller.CustomLogInSuccessHandler;
+import com.example.bookrating.controller.CustomLogoutHandler;
 import com.example.bookrating.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +25,12 @@ public class SecurityConfig {
     private String frontendUrl;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomLogInSuccessHandler customLogInSuccessHandler;
+    private final CustomLogoutHandler customLogoutHandler;
 
-
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler, CustomLogoutHandler customLogoutHandler) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customLogInSuccessHandler = customLogInSuccessHandler;
+        this.customLogoutHandler = customLogoutHandler;
     }
 
     @Bean
@@ -66,6 +68,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl(frontendUrl) // 로그아웃 후 리다이렉트될 프론트엔드 경로
+                        .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
                         .invalidateHttpSession(true) // 세션 무효화
                 )
 

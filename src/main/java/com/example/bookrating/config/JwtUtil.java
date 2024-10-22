@@ -16,13 +16,20 @@ public class JwtUtil {
 
         String secretKey = env.getProperty("jwt.secret");
         if (secretKey==null) return "";
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        String username = "";
 
-        String username = claims.get("username", String.class);
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            username = claims.get("username", String.class);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return username;
     }

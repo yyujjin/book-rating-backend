@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,21 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException,AuthenticationException {
         String token = getJwtFromCookies(request); //헤더에서 jwt추출
 
-        String username = jwtUtil.parseToken(token);
+        try {
+            String username = jwtUtil.parseToken(token);
+            // 사용자 정보로 Authentication 객체 생성 후 설정
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        } catch (AuthenticationException e) {
+            request.setAttribute("error","exception");
+        }
+
 
         //if (claims != null) {
             // 인증 처리 (SecurityContext에 사용자 정보 설정)
         //    String username = claims.get("username", String.class);
 
-            if (username != null) {
-                // 사용자 정보로 Authentication 객체 생성 후 설정
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
         //}
         // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);

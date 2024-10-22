@@ -59,7 +59,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/books","/books/*/reviews","/tags").permitAll()
+                        .requestMatchers("/books","/books/*/reviews","/tags","/loginInfo").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -74,13 +74,13 @@ public class SecurityConfig {
                         .invalidateHttpSession(true) // 세션 무효화
                 )
 
-                .exceptionHandling(exceptions -> exceptions
+               /* .exceptionHandling(exceptions -> exceptions
                         // loginInfo 경로에 대해서는 기본 401 에러 반환
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/loginInfo")
                         )
-                )
+                )*/
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         //세션 설정 : STATELESS

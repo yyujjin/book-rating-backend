@@ -26,11 +26,13 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomLogInSuccessHandler customLogInSuccessHandler;
     private final CustomLogoutHandler customLogoutHandler;
+    private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler, CustomLogoutHandler customLogoutHandler) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler, CustomLogoutHandler customLogoutHandler, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customLogInSuccessHandler = customLogInSuccessHandler;
         this.customLogoutHandler = customLogoutHandler;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -79,7 +81,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/loginInfo")
                         )
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         //세션 설정 : STATELESS
         http

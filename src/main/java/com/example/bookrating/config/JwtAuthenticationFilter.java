@@ -1,7 +1,5 @@
 package com.example.bookrating.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -23,16 +21,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
+    private final JwtUtil jwtUtil;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getJwtFromCookies(request); //헤더에서 jwt추출
-
-
-        Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
 
 
 
@@ -43,9 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (claims != null) {
+        String username = jwtUtil.parseToken(token);
+
+        //if (claims != null) {
             // 인증 처리 (SecurityContext에 사용자 정보 설정)
-            String username = claims.get("username", String.class);
+        //    String username = claims.get("username", String.class);
 
             if (username != null) {
                 // 사용자 정보로 Authentication 객체 생성 후 설정
@@ -53,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-        }
+        //}
         // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
     }

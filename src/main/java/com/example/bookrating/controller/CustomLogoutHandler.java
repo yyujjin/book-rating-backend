@@ -17,5 +17,8 @@ public class CustomLogoutHandler implements LogoutHandler {
         jwtCookie.setHttpOnly(true);
         jwtCookie.setMaxAge(0);  // 쿠키 만료
         response.addCookie(jwtCookie);
+
+        // 상태 코드를 200으로 설정
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

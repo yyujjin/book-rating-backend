@@ -69,7 +69,6 @@ public class SecurityConfig {
 
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl(frontendUrl) // 로그아웃 후 리다이렉트될 프론트엔드 경로
                         .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
                         .invalidateHttpSession(true) // 세션 무효화
                 )

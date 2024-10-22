@@ -44,7 +44,7 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
                 .claim("avatar", userSessionService.getAvatar())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
-                .signWith(SignatureAlgorithm.HS256, jwtSecret) // 서명 알고리즘
+                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘
                 .compact();
 
         // JWT를 HttpOnly 쿠키에 저장

@@ -5,11 +5,14 @@ import com.example.bookrating.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -19,9 +22,9 @@ public class SecurityConfig {
     // application.properties 또는 .env 파일에서 FRONTEND_URL 값을 가져옴
     @Value("${frontend.url}")
     private String frontendUrl;
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomLogInSuccessHandler customLogInSuccessHandler;
+
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler) {
         this.customOAuth2UserService = customOAuth2UserService;
@@ -64,6 +67,14 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl(frontendUrl) // 로그아웃 후 리다이렉트될 프론트엔드 경로
                         .invalidateHttpSession(true) // 세션 무효화
+                )
+
+                .exceptionHandling(exceptions -> exceptions
+                        // loginInfo 경로에 대해서는 기본 401 에러 반환
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                new AntPathRequestMatcher("/loginInfo")
+                        )
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 

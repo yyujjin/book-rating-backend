@@ -34,6 +34,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .parseClaimsJws(token)
                 .getBody();
 
+
+
+        // /books 경로에 대한 요청이면 JWT 검사 건너뛰기
+        String path = request.getRequestURI();
+        if (path.startsWith("/books") || path.startsWith("/tags") || path.startsWith("/books/*/reviews")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (claims != null) {
             // 인증 처리 (SecurityContext에 사용자 정보 설정)
             String username = claims.get("username", String.class);

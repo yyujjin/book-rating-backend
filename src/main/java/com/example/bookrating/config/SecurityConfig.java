@@ -57,11 +57,11 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/books","/books/{bookId}/reviews","/tags").permitAll()
+                        .requestMatchers("/books","/books/*/reviews","/tags").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl(frontendUrl+"/loginSuccess)", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
+                        .defaultSuccessUrl(frontendUrl+"/loginSuccess", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
                         .failureUrl(frontendUrl+"/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
                         .successHandler(customLogInSuccessHandler)
 

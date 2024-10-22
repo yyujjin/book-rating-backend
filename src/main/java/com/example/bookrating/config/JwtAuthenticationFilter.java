@@ -31,15 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getJwtFromCookies(request); //헤더에서 jwt추출
 
-
-
-        // /books 경로에 대한 요청이면 JWT 검사 건너뛰기
-        String path = request.getRequestURI();
-        if (path.startsWith("/books") || path.startsWith("/tags") || path.startsWith("/books/*/reviews")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String username = jwtUtil.parseToken(token);
 
         //if (claims != null) {
@@ -68,4 +59,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+
+        String[] excludePath = {"/books", "/books/*/reviews", "/tags"};
+        String path = request.getRequestURI();
+        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+    }
 }

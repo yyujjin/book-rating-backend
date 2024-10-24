@@ -3,6 +3,7 @@ package com.example.bookrating.config;
 import com.example.bookrating.controller.CustomLogInSuccessHandler;
 import com.example.bookrating.controller.CustomLogoutHandler;
 import com.example.bookrating.service.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +60,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/books","/books/*/reviews","/tags","/loginInfo").permitAll()
+                        .requestMatchers("/books","/books/*/reviews","/tags","/loginInfo","/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -70,10 +71,14 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")  // 로그아웃 처리할 URL 설정
-                        .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
+                        //.addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
                         .invalidateHttpSession(true)  // 세션 무효화
                         .deleteCookies("JSESSIONID", "jwt")  //JSESSIONID: 세션 식별 쿠키/jwt : 토큰을 저장하는 쿠키 삭제
-                       // .logoutSuccessUrl(frontendUrl)  // 로그아웃 후 리다이렉트할 URL
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            // 리다이렉트 없이 직접 응답 처리
+                            response.setStatus(HttpServletResponse.SC_OK);  // 200 상태 코드 설정
+                            response.getWriter().flush();  // 응답 본문 비우기 (필요 시 메시지 추가 가능)
+                        })
                 )
 
                /* .exceptionHandling(exceptions -> exceptions

@@ -21,7 +21,7 @@ public class Book {
     private String isbn;
     private String title;
     private double average; //외래키 설정해야하나?
-
+    private String bookCoverUrl; //책 표지 이미지
 
     @ManyToMany
     @JoinTable(

@@ -46,6 +46,7 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
+        book.setBookCoverUrl(bookDTO.getBookCoverUrl());
 
         Set<Tag> tags = new HashSet<>();
 

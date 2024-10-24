@@ -9,4 +9,5 @@ public class BookDTO {
     private String isbn;
     private String title;
     private List<Long> tagIds;
+    private String bookCoverUrl;
 }

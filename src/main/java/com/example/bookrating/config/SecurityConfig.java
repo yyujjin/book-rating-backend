@@ -70,10 +70,10 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")  // 로그아웃 처리할 URL 설정
-                        //.addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
+                        .addLogoutHandler(customLogoutHandler)  // 커스텀 로그아웃 핸들러 추가
                         .invalidateHttpSession(true)  // 세션 무효화
                         .deleteCookies("JSESSIONID", "jwt")  //JSESSIONID: 세션 식별 쿠키/jwt : 토큰을 저장하는 쿠키 삭제
-                        .logoutSuccessUrl(frontendUrl)  // 로그아웃 후 리다이렉트할 URL
+                       // .logoutSuccessUrl(frontendUrl)  // 로그아웃 후 리다이렉트할 URL
                 )
 
                /* .exceptionHandling(exceptions -> exceptions

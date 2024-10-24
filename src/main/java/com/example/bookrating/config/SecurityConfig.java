@@ -65,6 +65,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/books/*/reviews").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling((exceptions) -> exceptions
+                        // 인증되지 않은 사용자에 대해 로그인페이지로 리다이렉트가 아닌 401 상태 코드 반환
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl(frontendUrl+"/loginSuccess", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
                         .failureUrl(frontendUrl+"/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로

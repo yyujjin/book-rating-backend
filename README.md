@@ -1,4 +1,4 @@
-# 📚 BookRating Program
+# 📚 BookRating API
 
 사용자가 책을 등록하고, 각 책에 대해 별점을 매기고 리뷰를 남길 수 있는 REST API를 제공합니다
 

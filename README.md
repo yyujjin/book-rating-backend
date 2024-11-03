@@ -12,9 +12,7 @@
 
 - **JDK**: Version 17
 - **프레임워크**: Spring Boot 3.3.2
-- **데이터베이스**
-    - **H2 Database** (로컬 개발/테스트 환경)
-    - **MySQL** (프로덕션 환경, AWS EC2)
+- **데이터베이스**: MySQL
 - **배포**: AWS EC2
 
 ## 📄 API 명세

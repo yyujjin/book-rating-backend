@@ -12,11 +12,17 @@ public class JwtUtil {
     @Autowired
     private Environment env;
 
-    public String parseToken(String token){
+    public String parseToken(String token) {
+
+        if (token == null || token.trim().isEmpty()) {
+            return null; // 유효하지 않은 토큰으로 간주하고 null 반환
+        }
 
         String secretKey = env.getProperty("jwt.secret");
-        if (secretKey==null) return "";
-        String username = "";
+
+        if (secretKey == null) {
+            throw new IllegalStateException("JWT Secret Key is not configured in environment properties.");
+        }
 
         try {
             Claims claims = Jwts.parser()
@@ -24,13 +30,10 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            username = claims.get("username", String.class);
-
-
+            return claims.get("username", String.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // 필요에 따라 로그 또는 사용자 정의 예외로 변경 가능
+            return null;  // 토큰이 유효하지 않으면 null 반환
         }
-
-        return username;
     }
 }

@@ -49,11 +49,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-
-        String[] excludePath = {"/books", "/books/*/reviews", "/tags"};
-        String path = request.getRequestURI();
-        return Arrays.stream(excludePath).anyMatch(path::startsWith);
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//
+//        String[] excludePath = {"/books", "/books/*/reviews", "/tags"};
+//        String path = request.getRequestURI();
+//
+//        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+//    }
 }

@@ -1,6 +1,5 @@
 package com.example.bookrating.config;
 
-import com.example.bookrating.controller.CustomLogInSuccessHandler;
 import com.example.bookrating.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,10 +23,10 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendUrl;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomLogInSuccessHandler customLogInSuccessHandler;
+    private final JwtAuthenticationSuccessHandler customLogInSuccessHandler;
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomLogInSuccessHandler customLogInSuccessHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtAuthenticationSuccessHandler customLogInSuccessHandler, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customLogInSuccessHandler = customLogInSuccessHandler;
         this.jwtUtil = jwtUtil;

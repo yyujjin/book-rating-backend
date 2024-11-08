@@ -1,4 +1,4 @@
-package com.example.bookrating.controller;
+package com.example.bookrating.config;
 
 import com.example.bookrating.service.UserSessionService;
 import io.jsonwebtoken.Jwts;
@@ -18,7 +18,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
+public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${frontend.url}")
     private String frontendUrl;
@@ -28,7 +28,7 @@ public class CustomLogInSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserSessionService userSessionService;
 
-    public CustomLogInSuccessHandler(UserSessionService userSessionService) {
+    public JwtAuthenticationSuccessHandler(UserSessionService userSessionService) {
         this.userSessionService = userSessionService;
     }
 

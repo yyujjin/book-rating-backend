@@ -13,6 +13,11 @@ public class JwtUtil {
     private Environment env;
 
     public String parseToken(String token) {
+
+        if (token == null || token.trim().isEmpty()) {
+            return null; // 유효하지 않은 토큰으로 간주하고 null 반환
+        }
+
         String secretKey = env.getProperty("jwt.secret");
 
         if (secretKey == null) {

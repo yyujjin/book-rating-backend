@@ -57,6 +57,6 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
         log.info("로그인에 성공했습니다. 토큰을 발급합니다. Token: " + token);
 
         response.addCookie(jwtCookie);
-        response.sendRedirect(frontendUrl + "/");
+        response.sendRedirect(frontendUrl + "/loginSuccess");
     }
 }

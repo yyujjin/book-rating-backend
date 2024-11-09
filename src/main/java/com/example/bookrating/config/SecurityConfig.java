@@ -23,12 +23,12 @@ public class SecurityConfig {
     @Value("${frontend.url}")
     private String frontendUrl;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final JwtAuthenticationSuccessHandler customLogInSuccessHandler;
+    private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtAuthenticationSuccessHandler customLogInSuccessHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandle, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
-        this.customLogInSuccessHandler = customLogInSuccessHandler;
+        this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandle;
         this.jwtUtil = jwtUtil;
     }
 
@@ -42,8 +42,11 @@ public class SecurityConfig {
 
                 //OAuth2 인증 중 사용자 정보를 불러오고 저장
                 .oauth2Login((oauth2)->oauth2
-                .userInfoEndpoint((userInfoEndpointConfig ->userInfoEndpointConfig
-                .userService(customOAuth2UserService))))
+                        .userInfoEndpoint((userInfoEndpointConfig ->userInfoEndpointConfig
+                        .userService(customOAuth2UserService)))
+                        .successHandler(jwtAuthenticationSuccessHandler)
+                        .failureUrl(frontendUrl+"/loginSuccess?error=true")
+                )
 
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
@@ -57,13 +60,6 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
 
-                //OAuth2 인증 성공 여부에 따른 후속 처리
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl(frontendUrl+"/loginSuccess", true) // 로그인 성공 후 리다이렉트될 프론트엔드 경로
-                        .failureUrl(frontendUrl+"/loginSuccess?error=true") // 로그인 실패 시 리다이렉트될 프론트엔드 경로
-                        .successHandler(customLogInSuccessHandler)
-
-                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .invalidateHttpSession(true)  // 세션 무효화

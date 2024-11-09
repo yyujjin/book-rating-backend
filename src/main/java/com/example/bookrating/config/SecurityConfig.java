@@ -47,8 +47,8 @@ public class SecurityConfig {
 
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/books","/tags","/loginInfo").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/books/*/reviews").permitAll() //get에 한해서만 적용
+                        .requestMatchers("/tags","/loginInfo").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
                         .anyRequest().authenticated()
                 )
 

@@ -1,4 +1,4 @@
-package com.example.bookrating.config;
+package com.example.bookrating.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -30,10 +30,10 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.get("username", String.class);
+            return claims.getSubject();
         } catch (Exception e) {
-            e.printStackTrace();  // 필요에 따라 로그 또는 사용자 정의 예외로 변경 가능
-            return null;  // 토큰이 유효하지 않으면 null 반환
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.example.bookrating.config;
 
-import com.example.bookrating.service.UserSessionService;
+import com.example.bookrating.dto.CustomOAuth2User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.IOException;
@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -26,23 +27,25 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final UserSessionService userSessionService;
-
-    public JwtAuthenticationSuccessHandler(UserSessionService userSessionService) {
-        this.userSessionService = userSessionService;
-    }
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, java.io.IOException {
 
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+
+// 사용자 정보 접근
+        String providerId = customOAuth2User.getProviderId();
+        String email = customOAuth2User.getUserEmail();
+        String avatar = customOAuth2User.getAvatar();
+
         // JWT 토큰 생성
         String token = Jwts.builder()
-                .setSubject(authentication.getName()) // 사용자 정보
-                .claim("authorities", authentication.getAuthorities()) // 권한 정보
-                .claim("username", userSessionService.getUserName())
-                .claim("email", userSessionService.getUserEmail())
-                .claim("avatar", userSessionService.getAvatar())
-                .setIssuedAt(new Date())
+                .setSubject(providerId) // 구글 고유 아이디
+                //.claim("authorities", authentication.getAuthorities()) // 권한 정보
+               // .claim("username", userSessionService.getUserName())
+                .claim("email", email)
+                .claim("avatar", avatar)
+                .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘
                 .compact();

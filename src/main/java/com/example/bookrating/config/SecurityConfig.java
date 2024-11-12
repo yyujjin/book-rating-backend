@@ -1,6 +1,7 @@
 package com.example.bookrating.config;
 
 import com.example.bookrating.service.CustomOAuth2UserService;
+import com.example.bookrating.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,10 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable())
 
+                //세션 설정 : STATELESS -> 요청마다 JWT로 인증 상태를 확인하는 무상태 인증 방식으로 설정
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 //OAuth2 인증 중 사용자 정보를 불러오고 저장
                 .oauth2Login((oauth2)->oauth2
                         .userInfoEndpoint((userInfoEndpointConfig ->userInfoEndpointConfig
@@ -47,6 +52,7 @@ public class SecurityConfig {
                         .successHandler(jwtAuthenticationSuccessHandler)
                         .failureUrl(frontendUrl+"/loginSuccess?error=true")
                 )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// 세션 무상태 설정
 
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
@@ -69,11 +75,7 @@ public class SecurityConfig {
                             response.getWriter().flush();  // 응답 본문 비우기 (필요 시 메시지 추가 가능)
                         })
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
-
-                //세션 설정 : STATELESS -> 요청마다 JWT로 인증 상태를 확인하는 무상태 인증 방식으로 설정
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         return http.build();
     }

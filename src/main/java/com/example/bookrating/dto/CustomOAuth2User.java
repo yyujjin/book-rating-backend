@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User {
@@ -19,7 +20,12 @@ private final UserDTO userDTO;
         return Map.of();
     }
 
-    //유저 권한
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    /*//유저 권한
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority>collection = new ArrayList<>();
@@ -31,17 +37,18 @@ private final UserDTO userDTO;
         });
 
         return collection;
-    }
+    }*/
 
-    //유저 이름
+    // 사용자 식별자로 Google의 고유 ID 반환
+    //밑에꺼랑 겹쳐서 빈문자열 반환할랬더니 에러남
     @Override
     public String getName() {
-        return userDTO.getName();
+        return userDTO.getProviderId();
     }
 
     //유저 아이디
-    public  String getUsername(){
-        return userDTO.getUserName();
+    public  String getProviderId(){
+        return userDTO.getProviderId();
     }
 
     //유저 이메일

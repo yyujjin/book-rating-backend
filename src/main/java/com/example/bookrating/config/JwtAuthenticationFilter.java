@@ -1,5 +1,6 @@
 package com.example.bookrating.config;
 
+import com.example.bookrating.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -30,9 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(token != null) {
             try {
-                String username = jwtUtil.parseToken(token);
+                String providerId = jwtUtil.parseToken(token);
+                System.out.println("사용자의 providerId : "+providerId);
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(providerId, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (AuthenticationException e) {
                 request.setAttribute("error","exception");
@@ -41,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    //헤더에서 토큰 빼내기
     private String getJwtFromCookies(HttpServletRequest request) {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())

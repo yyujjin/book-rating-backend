@@ -7,6 +7,9 @@ import com.example.bookrating.repository.BookRepository;
 import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -29,7 +32,14 @@ public class BookService {
     public List<Book> getBooks () {
 
         log.info("가져옴:{}",bookRepository.findAll());
+
         return bookRepository.findAll();
+    }
+
+    //10개씩 페이징 처리
+    public Page<Book> getBooksByPaging(int page) {
+        Pageable pageable = PageRequest.of(page, 10); // 한 페이지에 10개의 아이템
+        return bookRepository.findAll(pageable);
     }
 
     //책 중복 확인
@@ -82,5 +92,6 @@ public class BookService {
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
 }
 

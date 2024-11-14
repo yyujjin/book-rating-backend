@@ -7,6 +7,7 @@ import com.example.bookrating.service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +28,13 @@ public class BookController {
     ReviewService reviewService;
 
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getBooks() {
-        List<Book>  bookList = bookService.getBooks();
+    public ResponseEntity<Page<Book>> getBooks(@RequestParam(defaultValue = "0") int page) {
+        List<Book> bookList = bookService.getBooks();
 
         for (Book book :  bookList){
             book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
         }
-        return  ResponseEntity.ok().body(bookService.getBooks());
+        return  ResponseEntity.ok().body(bookService.getBooksByPaging(page));
     }
 
     @PostMapping("/books")

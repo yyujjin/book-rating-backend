@@ -33,15 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existData==null){
             UserEntity userEntity = new UserEntity();
             userEntity.setProviderId(googleResponseDTO.getProviderId());
-            userEntity.setEmail(googleResponseDTO.getEmail());
-            userEntity.setAvatar(googleResponseDTO.getPicture());
-
             userRepository.save(userEntity);
-
-        }else {
-            existData.setEmail(googleResponseDTO.getEmail());
-            //existData 객체가 기존 데이터의 상태로 불러와져 일부 필드를 업데이트한 후, 변경 사항을 반영하여 저장함
-            userRepository.save(existData);
         }
 
         UserDTO userDTO = new UserDTO();

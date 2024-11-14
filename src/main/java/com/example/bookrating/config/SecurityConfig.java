@@ -19,8 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-
-    // application.properties 또는 .env 파일에서 FRONTEND_URL 값을 가져옴
     @Value("${frontend.url}")
     private String frontendUrl;
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -52,7 +50,6 @@ public class SecurityConfig {
                         .successHandler(jwtAuthenticationSuccessHandler)
                         .failureUrl(frontendUrl+"/loginSuccess?error=true")
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// 세션 무상태 설정
 
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
@@ -68,7 +65,7 @@ public class SecurityConfig {
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .invalidateHttpSession(true)  // 세션 무효화
+                        .invalidateHttpSession(true)  // 세션 무효화 //여기서 세션 쓰고 있네
                         .deleteCookies("JSESSIONID", "jwt")  //JSESSIONID: 세션 식별 쿠키/jwt : 토큰을 저장하는 쿠키 삭제
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);  //리다이렉트 없이 직접 응답 처리 :  200 상태 코드 설정

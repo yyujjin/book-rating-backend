@@ -28,13 +28,13 @@ public class BookController {
     ReviewService reviewService;
 
     @GetMapping("/books")
-    public ResponseEntity<Page<Book>> getBooks(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<List<Book>> getBooks(@RequestParam(defaultValue = "0") int page) {
         List<Book> bookList = bookService.getBooks();
 
         for (Book book :  bookList){
             book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
         }
-        return  ResponseEntity.ok().body(bookService.getBooksByPaging(page));
+        return  ResponseEntity.ok().body(bookService.getBooksByPaging(page).getContent());
     }
 
     @PostMapping("/books")

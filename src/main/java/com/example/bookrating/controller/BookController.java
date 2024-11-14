@@ -28,7 +28,7 @@ public class BookController {
     ReviewService reviewService;
 
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getBooks(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<List<Book>> getBooks(@RequestParam(defaultValue = "1") int page) {
         List<Book> bookList = bookService.getBooks();
 
         for (Book book :  bookList){

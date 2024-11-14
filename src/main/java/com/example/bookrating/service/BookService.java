@@ -38,7 +38,7 @@ public class BookService {
 
     //10개씩 페이징 처리
     public Page<Book> getBooksByPaging(int page) {
-        Pageable pageable = PageRequest.of(page, 10); // 한 페이지에 10개의 아이템
+        Pageable pageable = PageRequest.of(page-1, 10); // 한 페이지에 10개의 아이템
         return bookRepository.findAll(pageable);
     }
 

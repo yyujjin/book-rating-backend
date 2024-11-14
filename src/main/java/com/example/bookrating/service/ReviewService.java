@@ -33,7 +33,7 @@ public class ReviewService {
         ReviewListDTO reviewListDTO = new ReviewListDTO();
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page-1, 10, Sort.by("id").descending());
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
         for (Review review : reviewList ){

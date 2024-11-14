@@ -22,7 +22,7 @@ public class ReviewController {
     BookService bookService;
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ReviewListDTO> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<ReviewListDTO> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
       return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
     }
 

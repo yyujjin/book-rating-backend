@@ -6,6 +6,10 @@ import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,18 +28,23 @@ public class ReviewService {
         this.bookService = bookService;
     }
 
-    public ReviewListDTO getReviews(Long bookId){
+    public ReviewListDTO getReviews(Long bookId, int page){
 
         ReviewListDTO reviewListDTO = new ReviewListDTO();
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
 
-        List<Review> reviewList= reviewRepository.findByBookId(bookId);
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+        Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
+
         for (Review review : reviewList ){
             ReviewDTO dto = new ReviewDTO(review.getId(), review.getRating(),review.getContent(),review.getUpdatedAt());
             reviewDTOList.add(dto);
         }
-        Collections.reverse(reviewDTOList);
+
+        //Collections.reverse(reviewDTOList);
         reviewListDTO.setReviews(reviewDTOList);
+
+        //평균 조회
         reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
 
         return reviewListDTO;

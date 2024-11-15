@@ -18,6 +18,7 @@ public class TokenExtractor {
     public UserDTO getUserInfoFromToken(HttpServletRequest request) {
 
         String token = getJwtFromCookies(request);
+        if(token==null) return null;
 
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY.getBytes())

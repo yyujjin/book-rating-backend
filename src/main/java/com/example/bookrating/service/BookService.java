@@ -1,21 +1,19 @@
 package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookDTO;
+import com.example.bookrating.dto.TagDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
 import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+import java.util.stream.Collectors;
 
-// TODO 추가, 추가_중복체크, 수정, 삭제 테스트 코드 작성하기
-// 작성법 모르겠음 스프링 입문 강의 참고
 @Slf4j
 @Service
 public class BookService {
@@ -44,7 +42,12 @@ public class BookService {
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
             dto.setBookCoverUrl(book.getBookCoverUrl());
-            dto.setTags(book.getTags());
+
+            List<TagDTO> tagDTOs = book.getTags().stream()
+                    .map(tag -> new TagDTO(tag.getId(), tag.getName()))
+                    .collect(Collectors.toList());
+            dto.setTags(tagDTOs);
+
             bookDTO.add(dto);
         }
 

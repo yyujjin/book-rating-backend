@@ -11,6 +11,6 @@ public class BookDTO {
     private String isbn;
     private String title;
     private List<Long> tagIds;
-    private Set<Tag> tags;
+    private List<TagDTO> tags;
     private String bookCoverUrl;
 }

@@ -26,8 +26,6 @@ public class BookService {
 
     public List<Book> getBooks () {
 
-        log.info("가져옴:{}",bookRepository.findAll());
-
         return bookRepository.findAll();
     }
 
@@ -77,9 +75,7 @@ public class BookService {
                tags.add(tagRepository.findById(bookDTO.getTagIds().get(i)).get());
             }
         }
-
         book.setTags(tags);
-
         bookRepository.save(book);
         log.info("책 저장 완료!");
     }

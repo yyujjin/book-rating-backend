@@ -28,13 +28,13 @@ public class BookController {
     ReviewService reviewService;
 
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getBooks(@RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<List<BookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
         List<Book> bookList = bookService.getBooks();
 
         for (Book book :  bookList){
             book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
         }
-        return  ResponseEntity.ok().body(bookService.getBooksByPaging(page).getContent());
+        return  ResponseEntity.ok().body(bookService.getBooksByPaging(page));
     }
 
     @PostMapping("/books")
@@ -48,6 +48,7 @@ public class BookController {
         }
 
         bookService.createBook(bookDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
     }
 

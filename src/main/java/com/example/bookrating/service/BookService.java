@@ -12,10 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 // TODO 추가, 추가_중복체크, 수정, 삭제 테스트 코드 작성하기
 // 작성법 모르겠음 스프링 입문 강의 참고
@@ -37,9 +34,21 @@ public class BookService {
     }
 
     //10개씩 페이징 처리
-    public Page<Book> getBooksByPaging(int page) {
+    public List<BookDTO> getBooksByPaging(int page) {
         Pageable pageable = PageRequest.of(page-1, 10); // 한 페이지에 10개의 아이템
-        return bookRepository.findAll(pageable);
+        List<Book> bookList =  bookRepository.findAll(pageable).getContent();
+        List<BookDTO> bookDTO = new ArrayList<>();
+        for(Book book : bookList) {
+            BookDTO dto = new BookDTO();
+            dto.setId(book.getId());
+            dto.setIsbn(book.getIsbn());
+            dto.setTitle(book.getTitle());
+            dto.setBookCoverUrl(book.getBookCoverUrl());
+            dto.setTags(book.getTags());
+            bookDTO.add(dto);
+        }
+
+        return bookDTO;
     }
 
     //책 중복 확인

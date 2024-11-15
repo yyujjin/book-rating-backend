@@ -20,12 +20,7 @@ private final UserDTO userDTO;
         return Map.of();
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    /*//유저 권한
+    //유저 권한
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority>collection = new ArrayList<>();
@@ -37,7 +32,7 @@ private final UserDTO userDTO;
         });
 
         return collection;
-    }*/
+    }
 
     // 사용자 식별자로 Google의 고유 ID 반환
     //밑에꺼랑 겹쳐서 빈문자열 반환할랬더니 에러남

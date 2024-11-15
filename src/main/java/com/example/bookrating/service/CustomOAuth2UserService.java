@@ -33,6 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existData==null){
             UserEntity userEntity = new UserEntity();
             userEntity.setProviderId(googleResponseDTO.getProviderId());
+            userEntity.setRole("ROLE_USER");
             userRepository.save(userEntity);
         }
 
@@ -40,6 +41,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userDTO.setProviderId(googleResponseDTO.getProviderId());
         userDTO.setEmail(googleResponseDTO.getEmail());
         userDTO.setAvatar(googleResponseDTO.getPicture());
+        userDTO.setRole("ROLE_USER");
         log.info(" userDTO.setProviderId : "+googleResponseDTO.getProviderId());
         log.info(("userDTO.setEmail : "+googleResponseDTO.getEmail()));
         log.info("userDTO.setAvatar : "+googleResponseDTO.getPicture());

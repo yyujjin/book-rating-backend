@@ -8,8 +8,8 @@ public class UserDTO {
     private String providerId; //구글 고유아이디
     private String email; //이메일
     private String avatar; //이미지
-
+    private String role; //권한
    // private String name; //유저 이름
-   // private String role; //권한
+
 
 }

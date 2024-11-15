@@ -2,9 +2,14 @@ package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.dto.ReviewListDTO;
+import com.example.bookrating.dto.UserDTO;
 import com.example.bookrating.entity.Review;
+import com.example.bookrating.entity.UserEntity;
+import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
+import com.example.bookrating.util.TokenExtractor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +26,33 @@ public class ReviewController {
     @Autowired
     BookService bookService;
 
+    @Autowired
+    TokenExtractor tokenExtractor;
+
+    @Autowired
+    UserRepository userRepository;
+
     @GetMapping("/books/{bookId}/reviews")
     public ResponseEntity<ReviewListDTO> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
       return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
     }
 
     @PostMapping("/books/{bookId}/reviews")
-    public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody ReviewDTO reviewDTO){
+    public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody ReviewDTO reviewDTO, HttpServletRequest request){
 
         if (reviewDTO.getRating()<0||reviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
         if (reviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
         Review review = new Review();
         review.setRating(reviewDTO.getRating());
         review.setContent(reviewDTO.getContent());
+        //토큰에서 유저 구글 고유아이디 가져옴
+        UserDTO userDTO = tokenExtractor.getUserInfoFromToken(request);
+        //db에서 유저 정보 가져옴
+        UserEntity user = userRepository.findByProviderId(userDTO.getProviderId());
+        //유저 고유 아이디 저장
+        if(user!=null)  review.setUserId(user.getId());
+        review.setUserAvatar(userDTO.getAvatar());
+        //유저 프로필 사진 저장
         boolean isReviewPosted = reviewService.postReview(bookId,review);
 
        if (!isReviewPosted) return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");

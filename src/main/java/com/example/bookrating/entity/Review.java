@@ -22,6 +22,9 @@ public class Review {
     private String content;
     private int rating;
     private LocalDateTime updatedAt;
+    private Long userId; //사용자 고유 아이디
+    private String userAvatar; //사용자 프로필 사진
+
     @ManyToOne
     @JoinColumn(name = "book_id")  // 외래키 이름을 'bookId'로 설정
     private Book book;

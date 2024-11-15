@@ -51,17 +51,17 @@ public class SecurityConfig {
                         .failureUrl(frontendUrl+"/loginSuccess?error=true")
                 )
 
-                //경로별 인가 작업
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/tags","/loginInfo").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
-                        .anyRequest().authenticated()
-                )
+//                //경로별 인가 작업
+//                .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers("/tags","/loginInfo").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
+//                        .anyRequest().authenticated()
+//                )
 
-                // 인증되지 않은 사용자에 대해 로그인페이지로 리다이렉트가 아닌 401 상태 코드 반환
-                .exceptionHandling((exceptions) -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                )
+//                // 인증되지 않은 사용자에 대해 로그인페이지로 리다이렉트가 아닌 401 상태 코드 반환
+//                .exceptionHandling((exceptions) -> exceptions
+//                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+//                )
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")

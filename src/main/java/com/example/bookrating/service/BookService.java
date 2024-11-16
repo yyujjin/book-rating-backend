@@ -2,8 +2,10 @@ package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookDTO;
 import com.example.bookrating.entity.Book;
+import com.example.bookrating.entity.Review;
 import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
+import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.TagRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class BookService {
 
     @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    ReviewRepository reviewRepository;
 
     public List<Book> getBooks () {
 
@@ -115,5 +120,11 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    //리뷰 존재 확인하기 -> 리뷰 존재시 true 반환
+    public boolean findReview(Long id) {
+        Optional<List<Review>> review = reviewRepository.findByBookId(id);
+        if (review.get().isEmpty()) return false;
+        return true;
+    }
 }
 

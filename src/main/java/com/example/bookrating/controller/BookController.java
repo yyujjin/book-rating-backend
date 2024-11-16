@@ -63,10 +63,16 @@ public class BookController {
 
     @DeleteMapping("/books/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+
         if (bookService.getBookById(id).isPresent()){
+
+            //삭제하고자 하는 책에 리뷰 존재시 400 에러반환
+            if (bookService.findReview(id))  { return ResponseEntity.badRequest().build();}
+
             bookService.deleteBook(id);
-            return  ResponseEntity.noContent().build();
+            return  ResponseEntity.ok().build();
         }
+
         return ResponseEntity.badRequest().body("존재하지 않는 책입니다.");
     }
 }

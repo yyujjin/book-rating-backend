@@ -24,5 +24,8 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     //rating 점수 가져오기
     @Query("SELECT rating FROM Review r WHERE r.book.id = :bookId")
     List<Integer> getRatings(@Param("bookId") Long bookId);
+
+    @Query("SELECT r FROM Review r WHERE r.book.id = :bookId")
+    Optional<List<Review>> findByBookId(Long bookId);
 }
 

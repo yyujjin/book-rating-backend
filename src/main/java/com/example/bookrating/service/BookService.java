@@ -30,6 +30,9 @@ public class BookService {
     @Autowired
     ReviewRepository reviewRepository;
 
+    @Autowired
+    ReviewService reviewService;
+
     public List<Book> getBooks () {
 
         return bookRepository.findAll();
@@ -46,6 +49,7 @@ public class BookService {
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
             dto.setBookCoverUrl(book.getBookCoverUrl());
+            dto.setAverage(reviewService.calculateAverage(reviewService.getRatings(book.getId())));
 
             dto.setTags(
                     book.getTags()

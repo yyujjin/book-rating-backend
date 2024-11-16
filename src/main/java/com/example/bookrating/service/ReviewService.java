@@ -4,6 +4,7 @@ import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.dto.ReviewListDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
+import com.example.bookrating.repository.BookRepository;
 import com.example.bookrating.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,11 +21,11 @@ import java.util.Optional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final BookService bookService;
+    private final BookRepository bookRepository;
 
-    public ReviewService(ReviewRepository reviewRepository, BookService bookService) {
+    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository) {
         this.reviewRepository = reviewRepository;
-        this.bookService = bookService;
+        this.bookRepository = bookRepository;
     }
 
     public ReviewListDTO getReviews(Long bookId, int page){
@@ -51,7 +52,8 @@ public class ReviewService {
 
     public boolean postReview(Long bookId, Review review){
         log.info("bookId:{}",bookId,"review:{}",review);
-        Optional<Book>book = bookService.getBookById(bookId);
+        Optional<Book>book = bookRepository.findById(bookId);
+
         if (book.isEmpty()){return false;}
         review.setBook(book.get());
         review.prePersist();

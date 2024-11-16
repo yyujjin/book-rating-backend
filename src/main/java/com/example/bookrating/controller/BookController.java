@@ -29,11 +29,7 @@ public class BookController {
 
     @GetMapping("/books")
     public ResponseEntity<List<ResponseBookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
-        List<Book> bookList = bookService.getBooks();
 
-        for (Book book :  bookList){
-            book.setAverage( reviewService.calculateAverage(reviewService.getRatings(book.getId())));
-        }
         return  ResponseEntity.ok().body(bookService.getBooksByPaging(page));
     }
 

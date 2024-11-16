@@ -1,6 +1,6 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.BookDTO;
+import com.example.bookrating.dto.ResponseBookDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ public class BookServiceTest {
     @Test
     public void 책_저장(){
         //given
-        BookDTO bookDTO = new BookDTO();
+        ResponseBookDTO bookDTO = new ResponseBookDTO();
         bookDTO.setIsbn("1111");
         bookDTO.setTitle("앨리스");
 

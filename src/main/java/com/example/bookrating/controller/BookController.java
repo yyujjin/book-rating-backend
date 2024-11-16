@@ -1,6 +1,7 @@
 package com.example.bookrating.controller;
 
-import com.example.bookrating.dto.BookDTO;
+import com.example.bookrating.dto.RequestBookDTO;
+import com.example.bookrating.dto.ResponseBookDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
@@ -27,7 +28,7 @@ public class BookController {
     ReviewService reviewService;
 
     @GetMapping("/books")
-    public ResponseEntity<List<BookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<List<ResponseBookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
         List<Book> bookList = bookService.getBooks();
 
         for (Book book :  bookList){
@@ -37,7 +38,7 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public ResponseEntity<?> createBook(@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<?> createBook(@RequestBody RequestBookDTO bookDTO) {
 
         if (bookService.isDuplicateBook(bookDTO.getIsbn())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");

@@ -1,6 +1,8 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.BookDTO;
+import com.example.bookrating.dto.RequestBookDTO;
+import com.example.bookrating.dto.ResponseBookDTO;
+import com.example.bookrating.dto.TagDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.entity.Tag;
@@ -34,23 +36,27 @@ public class BookService {
     }
 
     //10개씩 페이징 처리
-    public List<BookDTO> getBooksByPaging(int page) {
+    public List<ResponseBookDTO> getBooksByPaging(int page) {
         Pageable pageable = PageRequest.of(page-1, 10); // 한 페이지에 10개의 아이템
         List<Book> bookList =  bookRepository.findAll(pageable).getContent();
-        List<BookDTO> bookDTO = new ArrayList<>();
+        List<ResponseBookDTO> bookDTO = new ArrayList<>();
         for(Book book : bookList) {
-            BookDTO dto = new BookDTO();
+            ResponseBookDTO dto = new ResponseBookDTO();
             dto.setId(book.getId());
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
             dto.setBookCoverUrl(book.getBookCoverUrl());
 
-            dto.setTagIds(
+            dto.setTags(
                     book.getTags()
                             .stream()
-                            .map(Tag::getId)
-                            .collect(Collectors.toList())
-            );
+                            .map(tag -> {
+                                TagDTO tagDTO = new TagDTO();
+                                tagDTO.setId(tag.getId());
+                                tagDTO.setName(tag.getName());
+                                return tagDTO;
+                            })
+                            .collect(Collectors.toList()));
 
             bookDTO.add(dto);
         }
@@ -68,19 +74,17 @@ public class BookService {
     }
 
     //책 저장
-    public void createBook(BookDTO bookDTO) {
+    public void createBook(RequestBookDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
         book.setBookCoverUrl(bookDTO.getBookCoverUrl());
 
-        Set<Tag> tags = new HashSet<>();
-
-        if (!bookDTO.getIsbn().isEmpty()) {
-            for (int i=0; i<bookDTO.getTagIds().size(); i++) {
-               tags.add(tagRepository.findById(bookDTO.getTagIds().get(i)).get());
-            }
-        }
+        Set<Tag> tags = bookDTO.getTags()
+                .stream()
+                .map(tagId -> tagRepository.findById(tagId)
+                        .orElseThrow(() -> new IllegalArgumentException("태그를 찾을 수 없습니다. ID: " + tagId)))
+                .collect(Collectors.toSet());
         book.setTags(tags);
         bookRepository.save(book);
         log.info("책 저장 완료!");
@@ -92,20 +96,24 @@ public class BookService {
     }
 
     //isbn으로 책 찾기
-    public BookDTO getBookByIsbn(String isbn) {
+    public ResponseBookDTO getBookByIsbn(String isbn) {
         Optional<Book> book = bookRepository.findByIsbn(isbn);
-        BookDTO bookDTO = new BookDTO();
+        ResponseBookDTO bookDTO = new ResponseBookDTO();
         bookDTO.setId(book.get().getId());
         bookDTO.setIsbn(book.get().getIsbn());
         bookDTO.setTitle(book.get().getTitle());
         bookDTO.setAverage(book.get().getAverage());
         bookDTO.setBookCoverUrl(book.get().getBookCoverUrl());
-        bookDTO.setTagIds(
+        bookDTO.setTags(
                 book.get().getTags()
                         .stream()
-                        .map(Tag::getId)
-                        .collect(Collectors.toList())
-        );
+                        .map(tag -> {
+                            TagDTO tagDTO = new TagDTO();
+                            tagDTO.setId(tag.getId());
+                            tagDTO.setName(tag.getName());
+                            return tagDTO;
+                        })
+                        .collect(Collectors.toList()));
         return bookDTO;
     }
 

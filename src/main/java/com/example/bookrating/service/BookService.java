@@ -1,7 +1,6 @@
 package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookDTO;
-import com.example.bookrating.dto.TagDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
@@ -41,10 +40,12 @@ public class BookService {
             dto.setTitle(book.getTitle());
             dto.setBookCoverUrl(book.getBookCoverUrl());
 
-            List<TagDTO> tagDTOs = book.getTags().stream()
-                    .map(tag -> new TagDTO(tag.getId(), tag.getName()))
-                    .collect(Collectors.toList());
-            dto.setTags(tagDTOs);
+            dto.setTagIds(
+                    book.getTags()
+                            .stream()
+                            .map(Tag::getId)
+                            .collect(Collectors.toList())
+            );
 
             bookDTO.add(dto);
         }
@@ -86,8 +87,21 @@ public class BookService {
     }
 
     //isbn으로 책 찾기
-    public Optional<Book> getBookByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn);
+    public BookDTO getBookByIsbn(String isbn) {
+        Optional<Book> book = bookRepository.findByIsbn(isbn);
+        BookDTO bookDTO = new BookDTO();
+        bookDTO.setId(book.get().getId());
+        bookDTO.setIsbn(book.get().getIsbn());
+        bookDTO.setTitle(book.get().getTitle());
+        bookDTO.setAverage(book.get().getAverage());
+        bookDTO.setBookCoverUrl(book.get().getBookCoverUrl());
+        bookDTO.setTagIds(
+                book.get().getTags()
+                        .stream()
+                        .map(Tag::getId)
+                        .collect(Collectors.toList())
+        );
+        return bookDTO;
     }
 
     //책 정보 수정

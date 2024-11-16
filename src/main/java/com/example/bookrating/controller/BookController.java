@@ -45,6 +45,7 @@ public class BookController {
 
         bookService.createBook(bookDTO);
 
+        //return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
     }
 

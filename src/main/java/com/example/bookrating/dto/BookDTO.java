@@ -1,9 +1,7 @@
 package com.example.bookrating.dto;
 
-import com.example.bookrating.entity.Tag;
 import lombok.Data;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class BookDTO {
@@ -11,6 +9,6 @@ public class BookDTO {
     private String isbn;
     private String title;
     private List<Long> tagIds;
-    private List<TagDTO> tags;
+    private double average;
     private String bookCoverUrl;
 }

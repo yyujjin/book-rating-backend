@@ -32,8 +32,8 @@ public class ReviewService {
 
         ReviewListDTO reviewListDTO = new ReviewListDTO();
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
-
-        Pageable pageable = PageRequest.of(page-1, 10, Sort.by("id").descending());
+//100개씩 페이징 처리
+        Pageable pageable = PageRequest.of(page-1, 100, Sort.by("id").descending());
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
         for (Review review : reviewList ){

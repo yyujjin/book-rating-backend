@@ -38,9 +38,9 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    //10개씩 페이징 처리
+    //100개씩 페이징 처리
     public List<ResponseBookDTO> getBooksByPaging(int page) {
-        Pageable pageable = PageRequest.of(page-1, 10); // 한 페이지에 10개의 아이템
+        Pageable pageable = PageRequest.of(page-1, 100); // 한 페이지에 10개의 아이템
         List<Book> bookList =  bookRepository.findAll(pageable).getContent();
         List<ResponseBookDTO> bookDTO = new ArrayList<>();
         for(Book book : bookList) {

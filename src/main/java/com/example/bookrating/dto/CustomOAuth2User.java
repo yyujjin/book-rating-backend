@@ -41,11 +41,13 @@ private final UserDTO userDTO;
         return userDTO.getProviderId();
     }
 
-    //유저 아이디
+    //유저 구글 고유 아이디
     public  String getProviderId(){
         return userDTO.getProviderId();
     }
 
+    //유저 아이디
+    public String getUsername() {return userDTO.getUsername();}
     //유저 이메일
     public String getUserEmail(){return userDTO.getEmail();}
 

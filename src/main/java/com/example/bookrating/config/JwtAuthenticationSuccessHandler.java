@@ -43,6 +43,7 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
                     // .claim("username", userSessionService.getUserName())
                     .claim("email", customOAuth2User.getUserEmail())
                     .claim("avatar", customOAuth2User.getAvatar())
+                    .claim("username",customOAuth2User.getUsername())
                     .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
                     .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
                     .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘

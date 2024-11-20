@@ -39,12 +39,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setProviderId(googleResponseDTO.getProviderId());
+        userDTO.setUsername(googleResponseDTO.getEmail().split("@")[0]);
         userDTO.setEmail(googleResponseDTO.getEmail());
         userDTO.setAvatar(googleResponseDTO.getPicture());
         userDTO.setRole("ROLE_USER");
-        log.info(" userDTO.setProviderId : "+googleResponseDTO.getProviderId());
-        log.info(("userDTO.setEmail : "+googleResponseDTO.getEmail()));
-        log.info("userDTO.setAvatar : "+googleResponseDTO.getPicture());
+
         return new CustomOAuth2User(userDTO);
     }
 }

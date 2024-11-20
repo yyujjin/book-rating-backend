@@ -55,7 +55,6 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfoEndpointConfig ->userInfoEndpointConfig
                         .userService(customOAuth2UserService)))
                         .successHandler(jwtAuthenticationSuccessHandler)
-                        .failureUrl(frontendUrl+"/loginSuccess?error=true")
                 )
 
 //                //경로별 인가 작업

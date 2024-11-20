@@ -20,7 +20,7 @@ public class UserController {
     }
 
     //회원가입
-    @PostMapping("auth/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> register (@RequestBody UserDTO userDTO) {
         if(userService.findByUserId(userDTO.getUsername())){return  ResponseEntity.badRequest().build();}
 

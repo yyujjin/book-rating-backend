@@ -31,10 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(token != null) {
             try {
-                String providerId = jwtUtil.parseToken(token);
-                System.out.println("사용자의 providerId : "+providerId);
+                String subject = jwtUtil.parseToken(token);
+                System.out.println("사용자의 subject : "+subject); //구글-> providerId, 일반 -> userId
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(providerId, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (AuthenticationException e) {
                 request.setAttribute("error","exception");
@@ -48,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
                     .filter(cookie -> "jwt".equals(cookie.getName()))
+                    .filter(cookie -> cookie.getValue() != null && !cookie.getValue().isBlank())
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);

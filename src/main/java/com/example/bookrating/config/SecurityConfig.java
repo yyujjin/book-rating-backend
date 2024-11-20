@@ -72,7 +72,6 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/auth/login")
                         .successHandler(jwtAuthenticationSuccessHandler)
-                        .failureUrl(frontendUrl+"/loginSuccess?error=true")
                 )
 
                 .logout(logout -> logout

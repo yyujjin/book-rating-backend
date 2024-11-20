@@ -29,7 +29,7 @@ public class UserService {
     //유저 정보 저장(회원가입 완료)
     public UserEntity saveUser(UserDTO userDTO) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(userDTO.getUserId());
+        userEntity.setUsername(userDTO.getUsername());
 
         String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
         userEntity.setPassword(encryptedPassword);

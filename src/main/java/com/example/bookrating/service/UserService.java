@@ -3,7 +3,8 @@ package com.example.bookrating.service;
 import com.example.bookrating.dto.UserDTO;
 import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.UserRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,6 +13,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,7 +30,10 @@ public class UserService {
     public UserEntity saveUser(UserDTO userDTO) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(userDTO.getUserId());
-        userEntity.setPassword(userDTO.getPassword());
+
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
+        userEntity.setPassword(encryptedPassword);
+
         userEntity.setRole("ROLE_USER");
         UserEntity savedUser = userRepository.save(userEntity);
         return savedUser;

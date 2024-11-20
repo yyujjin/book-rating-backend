@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -29,26 +30,38 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, java.io.IOException {
-
+        String token = null;
         authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-// 사용자 정보 접근
-        String providerId = customOAuth2User.getProviderId();
-        String email = customOAuth2User.getUserEmail();
-        String avatar = customOAuth2User.getAvatar();
+        if (authentication.getPrincipal() instanceof CustomOAuth2User) {
+            // OAuth2 로그인 사용자
+            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+            System.out.println("OAuth2 사용자 정보: " + customOAuth2User.getAttributes());
+            token = Jwts.builder()
+                    .setSubject(customOAuth2User.getProviderId()) // 구글 고유 아이디
+                    //.claim("authorities", authentication.getAuthorities()) // 권한 정보
+                    // .claim("username", userSessionService.getUserName())
+                    .claim("email", customOAuth2User.getUserEmail())
+                    .claim("avatar", customOAuth2User.getAvatar())
+                    .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
+                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
+                    .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘
+                    .compact();
+        } else if (authentication.getPrincipal() instanceof UserDetails) {
+            // 일반 로그인 사용자
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            System.out.println("일반 사용자 정보: " + userDetails.getUsername());
+            token = Jwts.builder()
+                    .setSubject(userDetails.getUsername()) // 유저아이디
+                    .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
+                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
+                    .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘
+                    .compact();
+        } else {
+            // 인증되지 않은 상태 (예: AnonymousUser)
+            System.out.println("인증되지 않은 사용자");
+        }
 
-        // JWT 토큰 생성
-        String token = Jwts.builder()
-                .setSubject(providerId) // 구글 고유 아이디
-                //.claim("authorities", authentication.getAuthorities()) // 권한 정보
-               // .claim("username", userSessionService.getUserName())
-                .claim("email", email)
-                .claim("avatar", avatar)
-                .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
-                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘
-                .compact();
 
         // JWT를 HttpOnly 쿠키에 저장
         Cookie jwtCookie = new Cookie("jwt", token);

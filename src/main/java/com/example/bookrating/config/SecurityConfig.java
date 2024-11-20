@@ -53,7 +53,7 @@ public class SecurityConfig {
 
 //                //경로별 인가 작업
 //                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/tags","/loginInfo").permitAll()
+//                        .requestMatchers("/tags","/loginInfo","/login").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
 //                        .anyRequest().authenticated()
 //                )
@@ -62,6 +62,12 @@ public class SecurityConfig {
 //                .exceptionHandling((exceptions) -> exceptions
 //                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 //                )
+
+                .formLogin(login -> login
+                        .loginPage("/auth/login")
+                        .successHandler(jwtAuthenticationSuccessHandler)
+                        .failureUrl(frontendUrl+"/loginSuccess?error=true")
+                )
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")

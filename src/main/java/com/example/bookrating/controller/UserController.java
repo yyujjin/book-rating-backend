@@ -22,7 +22,7 @@ public class UserController {
     //회원가입
     @PostMapping("auth/register")
     public ResponseEntity<?> register (@RequestBody UserDTO userDTO) {
-        if(userService.findByUserId(userDTO.getUserId())){return  ResponseEntity.badRequest().build();}
+        if(userService.findByUserId(userDTO.getUsername())){return  ResponseEntity.badRequest().build();}
 
        return  ResponseEntity.ok().body(userService.saveUser(userDTO));
     }

@@ -6,10 +6,7 @@ import com.example.bookrating.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
@@ -29,6 +26,13 @@ public class UserController {
 
        return  ResponseEntity.ok().body(userService.saveUser(userDTO));
     }
+
+    //로그인
+    @PostMapping("/auth/login")
+    public ResponseEntity<?> login (@ModelAttribute UserDTO userDTO) {
+        return  ResponseEntity.ok().body("로그인 완료");
+    }
+
 
     //유저 정보 반환
     @PostMapping("/loginInfo")

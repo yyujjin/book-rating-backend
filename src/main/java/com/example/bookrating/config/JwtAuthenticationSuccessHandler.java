@@ -53,7 +53,8 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             System.out.println("일반 사용자 정보: " + userDetails.getUsername());
             token = Jwts.builder()
-                    .setSubject(userDetails.getUsername()) // 유저아이디
+                    //.setSubject(userDetails.getUsername()) // 유저아이디
+                    .claim("username",userDetails.getUsername())
                     .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
                     .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
                     .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘

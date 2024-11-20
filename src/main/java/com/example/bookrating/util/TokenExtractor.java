@@ -27,11 +27,10 @@ public class TokenExtractor {
                     .getBody();
 
             UserDTO userDTO = new UserDTO();
-            userDTO.setProviderId(claims.getSubject());
+           //userDTO.setProviderId(claims.getSubject());
+            userDTO.setUsername(claims.get("username", String.class));
             userDTO.setEmail(claims.get("email", String.class));
             userDTO.setAvatar(claims.get("avatar", String.class));
-            System.out.println("사용자 고유 아이디 :" + claims.getSubject() + "\n 사용자 이메일 : " + userDTO.getEmail() + "\n 사용자 이미지 : " + userDTO.getAvatar());
-
             return userDTO;
     }
 
@@ -39,6 +38,7 @@ public class TokenExtractor {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
                     .filter(cookie -> "jwt".equals(cookie.getName()))
+                    .filter(cookie -> cookie.getValue() != null && !cookie.getValue().isBlank())
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);

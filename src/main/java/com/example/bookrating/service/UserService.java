@@ -21,8 +21,8 @@ public class UserService {
     }
 
     //아이디 중복 확인
-    public boolean findByUserId(String userId) {
-       Optional<UserEntity> user = userRepository.findByUserId(userId);
+    public boolean findByUsername(String username) {
+       Optional<UserEntity> user = userRepository.findByUsername(username);
        return user.isPresent()?true:false;
     }
 

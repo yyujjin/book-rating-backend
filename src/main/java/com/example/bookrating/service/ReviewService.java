@@ -37,7 +37,7 @@ public class ReviewService {
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
         for (Review review : reviewList ){
-            ReviewDTO dto = new ReviewDTO(review.getId(), review.getRating(),review.getContent(),review.getUpdatedAt(),review.getUserId(),review.getUserAvatar());
+            ReviewDTO dto = new ReviewDTO(review.getId(),review.getBook().getId(), review.getRating(),review.getContent(),review.getUpdatedAt(),review.getUserId(),review.getUserAvatar());
             reviewDTOList.add(dto);
         }
 

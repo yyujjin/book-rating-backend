@@ -13,10 +13,11 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String providerId; //구글 고유 아이디
+    private String userId; //일반 유저
+    private String password;
     private String role; //유저 권한
-    //private String email;
-    //private String avatar; //유저 사진
 
+    //private String avatar; //유저 사진
     // private String name;
 
 }

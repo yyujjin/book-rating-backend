@@ -6,6 +6,8 @@ import lombok.Data;
 public class UserDTO {
     private Long id;
     private String providerId; //구글 고유아이디
+    private String userId; //일반 유저 아이디
+    private String password;
     private String email; //이메일
     private String avatar; //이미지
     private String role; //권한

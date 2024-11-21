@@ -9,6 +9,6 @@ public class ResponseBookDTO {
     private String isbn;
     private String title;
     private List<TagDTO> tags;
-    private double average;
-    private String bookCoverUrl;
+    private double averageRating;
+    private String thumbnail;
 }

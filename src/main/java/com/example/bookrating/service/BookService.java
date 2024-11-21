@@ -11,7 +11,6 @@ import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,8 +41,8 @@ public class BookService {
             dto.setId(book.getId());
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
-            dto.setBookCoverUrl(book.getBookCoverUrl());
-            dto.setAverage(reviewService.calculateAverage(reviewService.getRatings(book.getId())));
+            dto.setThumbnail(book.getBookCoverUrl());
+            dto.setAverageRating(reviewService.calculateAverage(reviewService.getRatings(book.getId())));
 
             dto.setTags(
                     book.getTags()
@@ -76,7 +75,7 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
-        book.setBookCoverUrl(bookDTO.getBookCoverUrl());
+        book.setBookCoverUrl(bookDTO.getThumbnail());
 
         Set<Tag> tags = bookDTO.getTags()
                 .stream()
@@ -100,8 +99,8 @@ public class BookService {
         bookDTO.setId(book.get().getId());
         bookDTO.setIsbn(book.get().getIsbn());
         bookDTO.setTitle(book.get().getTitle());
-        bookDTO.setAverage(book.get().getAverage());
-        bookDTO.setBookCoverUrl(book.get().getBookCoverUrl());
+        bookDTO.setAverageRating(book.get().getAverage());
+        bookDTO.setThumbnail(book.get().getBookCoverUrl());
         bookDTO.setTags(
                 book.get().getTags()
                         .stream()

@@ -9,5 +9,5 @@ public class RequestBookDTO {
     private String isbn;
     private String title;
     private List<Long> tags;
-    private String bookCoverUrl;
+    private String thumbnail;
 }

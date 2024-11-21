@@ -51,7 +51,7 @@ public class ReviewService {
             review.setContent(r.getContent());
             review.setUpdatedAt(r.getUpdatedAt());
             //일단 임시로 아바타 넣음 원래는 유저네임 넣어야함
-            review.setUser(new UserDTO(r.getUserId(),r.getUserAvatar()));
+            review.setUser(new UserDTO(r.getUserId(),r.getUsername()));
             BookReviewsDTO responseDTO = new BookReviewsDTO();
             responseDTO.setBookId(r.getBook().getId());
             responseDTO.setReviews(review);

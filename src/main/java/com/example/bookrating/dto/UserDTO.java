@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class UserDTO {
     private Long id;
-    private String password;
+    private String username;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String password) {
+    public UserDTO(Long id, String username) {
         this.id = id;
-        this.password = password;
+        this.username = username;
     }
 }

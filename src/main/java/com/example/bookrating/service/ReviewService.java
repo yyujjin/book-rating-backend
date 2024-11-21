@@ -39,7 +39,7 @@ public class ReviewService {
 
         for (Review r : reviewList ){
 
-            ReviewDetailDTO review = new ReviewDetailDTO();
+            ReviewWithUserDTO review = new ReviewWithUserDTO();
 
             review.setId(r.getId());
             review.setRating(r.getRating());
@@ -61,7 +61,7 @@ public class ReviewService {
     }
 
     //로그인한 사용자의 리뷰조회
-    public List<ReviewDetailDTO> getUserReviewByBookId(Long bookId, HttpServletRequest request) {
+    public List<ReviewWithUserDTO> getUserReviewByBookId(Long bookId, HttpServletRequest request) {
         //토큰에서 사용자 정보 추출
         UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
         List<ReviewDetailDTO> reviewList = new ArrayList<>();
@@ -77,11 +77,7 @@ public class ReviewService {
                 reviewDTO.setContent(r.getContent());
                 reviewDTO.setUpdatedAt(r.getUpdatedAt());
 
-                reviewDTO.setUserId(userId);
-                reviewDTOList.add(reviewDTO);
-              */
-
-                ReviewDetailDTO dto = new ReviewDetailDTO();
+                ReviewWithUserDTO dto = new ReviewWithUserDTO();
                 UserDTO userDTO = new UserDTO();
                 dto.setId(r.getId());
                 dto.setRating(r.getRating());

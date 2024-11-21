@@ -41,7 +41,7 @@ public class ReviewController {
     @GetMapping("/books/{bookId}/reviews/my-review")
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
-        List<ReviewDetailDTO> review = reviewService.getUserReviewByBookId(bookId,request);
+        List<ReviewWithUserDTO> review = reviewService.getUserReviewByBookId(bookId,request);
         if(review.isEmpty()){return ResponseEntity.status(204).build();}
 
         return ResponseEntity.ok().body(review);

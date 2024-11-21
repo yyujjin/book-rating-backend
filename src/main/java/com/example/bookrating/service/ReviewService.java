@@ -84,7 +84,7 @@ public class ReviewService {
         return reviewList;
     }
 
-    public ReviewResponseDTO postReview(Long bookId, ReviewDTO reviewDTO, HttpServletRequest request){
+    public ReviewResponseDTO postReview(Long bookId, UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){
 
         Review review = new Review();
         //토큰에서 유저 구글 고유아이디 가져옴
@@ -104,8 +104,8 @@ public class ReviewService {
                 //유저 프로필 사진 저장
                 //review.setUserAvatar(userDetailsDTO.getAvatar());
             }
-            review.setRating(reviewDTO.getRating());
-            review.setContent(reviewDTO.getContent());
+            review.setRating(userProfileReviewDTO.getRating());
+            review.setContent(userProfileReviewDTO.getContent());
 
             //todo:책 엔티티를 저장할지 책 id만 저장할지 생각해봐야할듯
             Optional<Book>book = bookRepository.findById(bookId);

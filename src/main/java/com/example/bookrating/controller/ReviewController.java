@@ -1,6 +1,6 @@
 package com.example.bookrating.controller;
 
-import com.example.bookrating.dto.ReviewDTO;
+import com.example.bookrating.dto.UserProfileReviewDTO;
 import com.example.bookrating.dto.BookReviewsDTO;
 import com.example.bookrating.dto.ReviewResponseDTO;
 import com.example.bookrating.dto.ReviewWithUserDTO;
@@ -49,12 +49,12 @@ public class ReviewController {
     }
 
     @PostMapping("/books/{bookId}/reviews")
-    public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody ReviewDTO reviewDTO, HttpServletRequest request){
+    public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){
 
-        if (reviewDTO.getRating()<0||reviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
-        if (reviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
+        if (userProfileReviewDTO.getRating()<0|| userProfileReviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
+        if (userProfileReviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
 
-        ReviewResponseDTO postedReview = reviewService.postReview(bookId,reviewDTO,request);
+        ReviewResponseDTO postedReview = reviewService.postReview(bookId, userProfileReviewDTO,request);
 
         if (postedReview==null) { return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");}
 

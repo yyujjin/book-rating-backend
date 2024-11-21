@@ -1,6 +1,6 @@
 package com.example.bookrating.controller;
 
-import com.example.bookrating.dto.ReviewDTO;
+import com.example.bookrating.dto.UserProfileReviewDTO;
 import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.dto.UserResponseDTO;
 import com.example.bookrating.entity.Review;
@@ -36,13 +36,11 @@ public class UserController {
        return  ResponseEntity.ok().body(userService.saveUser(userDetailsDTO));
     }
 
-    //로그인
     //문서에는 json 요청이던데 form 로그인으로 하면 안되나?
     @PostMapping("/auth/login")
     public ResponseEntity<?> login (@ModelAttribute UserDetailsDTO userDetailsDTO) {
         return  ResponseEntity.ok().body("로그인 완료");
     }
-
 
     //유저 정보 반환
     @GetMapping("/auth/me")
@@ -55,22 +53,22 @@ public class UserController {
         Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
         userResponseDTO.setId(user.get().getId());
         userResponseDTO.setUsername(userDetailsDTO.getUsername());
-        List<ReviewDTO> reviewDTOList = new ArrayList<>();
+        List<UserProfileReviewDTO> userProfileReviewDTOList = new ArrayList<>();
 
         Optional<List<Review>> review = reviewRepository.getReviewsByUserId(user.get().getId());
         for(Review r : review.get()) {
-            ReviewDTO reviewDTO = new ReviewDTO();
-            reviewDTO.setId(r.getId());
-            reviewDTO.setBookId(r.getBook().getId());
-            reviewDTO.setRating(r.getRating());
-            reviewDTO.setContent(r.getContent());
-            reviewDTO.setUpdatedAt(r.getUpdatedAt());
-            reviewDTO.setUserId(r.getUserId());
-            //유저 네임은 일단 넣지 않음
+            UserProfileReviewDTO userProfileReviewDTO = new UserProfileReviewDTO();
+            userProfileReviewDTO.setId(r.getId());
+            userProfileReviewDTO.setBookId(r.getBook().getId());
+            userProfileReviewDTO.setRating(r.getRating());
+            userProfileReviewDTO.setContent(r.getContent());
+            userProfileReviewDTO.setUpdatedAt(r.getUpdatedAt());
+            userProfileReviewDTO.setUserId(r.getUserId());
+            userProfileReviewDTO.setUser(r.getUsername());
 
-            reviewDTOList.add(reviewDTO);
+            userProfileReviewDTOList.add(userProfileReviewDTO);
         }
-        userResponseDTO.setReviews(reviewDTOList);
+        userResponseDTO.setReviews(userProfileReviewDTOList);
 
         if(userDetailsDTO ==null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 

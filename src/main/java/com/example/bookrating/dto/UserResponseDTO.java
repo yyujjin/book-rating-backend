@@ -9,5 +9,5 @@ public class UserResponseDTO {
     private Long id;
     private String username;
     private String password;
-    private List<ReviewDTO> reviews;
+    private List<UserProfileReviewDTO> reviews;
 }

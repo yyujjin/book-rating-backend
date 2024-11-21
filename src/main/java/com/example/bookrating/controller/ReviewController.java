@@ -1,8 +1,8 @@
 package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
-import com.example.bookrating.dto.ReviewListDTO;
-import com.example.bookrating.dto.UserDTO;
+import com.example.bookrating.dto.BookReviewsDTO;
+import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.ReviewRepository;
@@ -39,18 +39,21 @@ public class ReviewController {
     ReviewRepository reviewRepository;
 
     @GetMapping("/books/{bookId}/reviews")
-    public ResponseEntity<ReviewListDTO> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
-      return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
+    public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
+        List<BookReviewsDTO> reviews =  reviewService.getReviews(bookId,page);
+        if (reviews.isEmpty()) {return ResponseEntity.noContent().build();}
+
+        return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
     }
 
     //로그인한 사용자의 리뷰 조회
     @GetMapping("/books/{bookId}/reviews/my-review")
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
-        UserDTO userDTO =  tokenExtractor.getUserInfoFromToken(request);
+        UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
         //유저 아이디 빼내기
-        Optional<UserEntity> user = userRepository.findByUsername(userDTO.getUsername());
+        Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
         Long userId = user.get().getId();
         //사용자의 리뷰 전체 가져오기
         Optional<List<Review>> reviews = reviewRepository.getReviewsByUserId(userId);
@@ -80,20 +83,20 @@ public class ReviewController {
         if (reviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
         Review review = new Review();
         //토큰에서 유저 구글 고유아이디 가져옴
-        UserDTO userDTO = tokenExtractor.getUserInfoFromToken(request);
+        UserDetailsDTO userDetailsDTO = tokenExtractor.getUserInfoFromToken(request);
 
         //guest 인 경우 (토큰 x)
-        if(userDTO==null) {
+        if(userDetailsDTO ==null) {
             review.setUserId(0L);
         }
         //로그인 유저 (토큰 O)
-        if(userDTO!=null){
+        if(userDetailsDTO !=null){
             //db에서 유저 정보 가져옴
-            UserEntity user = userRepository.findByProviderId(userDTO.getProviderId());
+            UserEntity user = userRepository.findByProviderId(userDetailsDTO.getProviderId());
             //유저 고유 아이디 저장
             if(user!=null)  review.setUserId(user.getId());
             //유저 프로필 사진 저장
-            review.setUserAvatar(userDTO.getAvatar());
+            review.setUserAvatar(userDetailsDTO.getAvatar());
         }
         review.setRating(reviewDTO.getRating());
         review.setContent(reviewDTO.getContent());

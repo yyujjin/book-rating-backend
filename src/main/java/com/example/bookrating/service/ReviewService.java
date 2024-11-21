@@ -1,7 +1,6 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.ReviewDTO;
-import com.example.bookrating.dto.ReviewListDTO;
+import com.example.bookrating.dto.*;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.BookRepository;
@@ -28,26 +27,42 @@ public class ReviewService {
         this.bookRepository = bookRepository;
     }
 
-    public ReviewListDTO getReviews(Long bookId, int page){
+    public List<BookReviewsDTO> getReviews(Long bookId, int page){
 
-        ReviewListDTO reviewListDTO = new ReviewListDTO();
-        List<ReviewDTO> reviewDTOList = new ArrayList<>();
-//100개씩 페이징 처리
+       // ReviewListDTO reviewListDTO = new ReviewListDTO();
+        //List<ReviewDTO> reviewDTOList = new ArrayList<>();
+
+        List<BookReviewsDTO> bookReviewsDTOList = new ArrayList<>();
+
+
+
         Pageable pageable = PageRequest.of(page-1, 100, Sort.by("id").descending());
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
-        for (Review review : reviewList ){
-            ReviewDTO dto = new ReviewDTO(review.getId(),review.getBook().getId(), review.getRating(),review.getContent(),review.getUpdatedAt(),review.getUserId(),review.getUserAvatar());
-            reviewDTOList.add(dto);
+
+        for (Review r : reviewList ){
+           // ReviewDTO dto = new ReviewDTO(review.getId(),review.getBook().getId(), review.getRating(),review.getContent(),review.getUpdatedAt(),review.getUserId(),review.getUserAvatar());
+            //reviewDTOList.add(dto);
+
+            ReviewDetailDTO review = new ReviewDetailDTO();
+
+            review.setId(r.getId());
+            review.setRating(r.getRating());
+            review.setContent(r.getContent());
+            review.setUpdatedAt(r.getUpdatedAt());
+            //일단 임시로 아바타 넣음 원래는 유저네임 넣어야함
+            review.setUser(new UserDTO(r.getUserId(),r.getUserAvatar()));
+            BookReviewsDTO responseDTO = new BookReviewsDTO();
+            responseDTO.setBookId(r.getBook().getId());
+            responseDTO.setReviews(review);
+
+            bookReviewsDTOList.add(responseDTO);
         }
 
-        //Collections.reverse(reviewDTOList);
-        reviewListDTO.setReviews(reviewDTOList);
-
         //평균 조회
-        reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
+       // reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
 
-        return reviewListDTO;
+        return bookReviewsDTOList;
     }
 
     public boolean postReview(Long bookId, Review review){

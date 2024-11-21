@@ -3,22 +3,18 @@ package com.example.bookrating.service;
 import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     //아이디 중복 확인
     public boolean findByUsername(String username) {

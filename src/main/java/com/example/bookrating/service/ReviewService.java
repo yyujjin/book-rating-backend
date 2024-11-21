@@ -9,6 +9,7 @@ import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class ReviewService {
@@ -27,13 +29,6 @@ public class ReviewService {
     private final BookRepository bookRepository;
     private final TokenExtractor tokenExtractor;
     private final UserRepository userRepository;
-
-    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository, TokenExtractor tokenExtractor, UserRepository userRepository) {
-        this.reviewRepository = reviewRepository;
-        this.bookRepository = bookRepository;
-        this.tokenExtractor = tokenExtractor;
-        this.userRepository = userRepository;
-    }
 
     public List<BookReviewsDTO> getReviews(Long bookId, int page){
 

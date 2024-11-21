@@ -11,7 +11,7 @@ import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
 import com.example.bookrating.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,24 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
 public class ReviewController {
 
-    @Autowired
-    ReviewService reviewService;
-
-    @Autowired
-    BookService bookService;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ReviewRepository reviewRepository;
-
-    @Autowired
-    TokenExtractor tokenExtractor;
+    private final ReviewService reviewService;
+    private final BookService bookService;
+    private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
+    private final TokenExtractor tokenExtractor;
 
     @GetMapping("/books/{bookId}/reviews")
     public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {

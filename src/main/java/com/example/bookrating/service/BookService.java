@@ -9,6 +9,7 @@ import com.example.bookrating.entity.Tag;
 import com.example.bookrating.repository.BookRepository;
 import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -17,24 +18,17 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class BookService {
 
-    @Autowired
-    BookRepository bookRepository;
-
-    @Autowired
-    TagRepository tagRepository;
-
-    @Autowired
-    ReviewRepository reviewRepository;
-
-    @Autowired
-    ReviewService reviewService;
+    private final BookRepository bookRepository;
+    private final TagRepository tagRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewService reviewService;
 
     public List<Book> getBooks () {
-
         return bookRepository.findAll();
     }
 

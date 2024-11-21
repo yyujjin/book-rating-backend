@@ -5,27 +5,24 @@ import com.example.bookrating.dto.ResponseBookDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
 public class BookController {
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
-
-    @Autowired
-    BookService bookService;
-
-    @Autowired
-    ReviewService reviewService;
+    private final BookService bookService;
+    private final ReviewService reviewService;
 
     @GetMapping("/books")
     public ResponseEntity<List<ResponseBookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {

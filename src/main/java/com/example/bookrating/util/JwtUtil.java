@@ -2,15 +2,16 @@ package com.example.bookrating.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class JwtUtil {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     public String parseToken(String token) {
 

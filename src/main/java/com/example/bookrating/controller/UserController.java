@@ -10,14 +10,15 @@ import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.UserService;
 import com.example.bookrating.util.TokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
 public class UserController {
@@ -26,13 +27,6 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
-
-    public UserController(TokenExtractor tokenExtractor, UserService userService, UserRepository userRepository, ReviewRepository reviewRepository) {
-        this.tokenExtractor = tokenExtractor;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.reviewRepository = reviewRepository;
-    }
 
     //회원가입
     @PostMapping("/auth/register")

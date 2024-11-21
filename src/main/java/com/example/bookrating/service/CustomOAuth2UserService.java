@@ -2,7 +2,7 @@ package com.example.bookrating.service;
 
 import com.example.bookrating.dto.CustomOAuth2User;
 import com.example.bookrating.dto.GoogleResponseDTO;
-import com.example.bookrating.dto.UserDTO;
+import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +37,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(userEntity);
         }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setProviderId(googleResponseDTO.getProviderId());
-        userDTO.setUsername(googleResponseDTO.getEmail().split("@")[0]);
-        userDTO.setEmail(googleResponseDTO.getEmail());
-        userDTO.setAvatar(googleResponseDTO.getPicture());
-        userDTO.setRole("ROLE_USER");
+        UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
+        userDetailsDTO.setProviderId(googleResponseDTO.getProviderId());
+        userDetailsDTO.setUsername(googleResponseDTO.getEmail().split("@")[0]);
+        userDetailsDTO.setEmail(googleResponseDTO.getEmail());
+        userDetailsDTO.setAvatar(googleResponseDTO.getPicture());
+        userDetailsDTO.setRole("ROLE_USER");
 
-        return new CustomOAuth2User(userDTO);
+        return new CustomOAuth2User(userDetailsDTO);
     }
 }

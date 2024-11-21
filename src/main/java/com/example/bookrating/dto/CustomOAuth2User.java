@@ -4,15 +4,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User {
 
-private final UserDTO userDTO;
+private final UserDetailsDTO userDetailsDTO;
 
-    public CustomOAuth2User(UserDTO userDTO) {
-        this.userDTO = userDTO;
+    public CustomOAuth2User(UserDetailsDTO userDetailsDTO) {
+        this.userDetailsDTO = userDetailsDTO;
     }
 
     @Override
@@ -27,7 +26,7 @@ private final UserDTO userDTO;
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return userDTO.getRole();
+                return userDetailsDTO.getRole();
             }
         });
 
@@ -38,19 +37,19 @@ private final UserDTO userDTO;
     //밑에꺼랑 겹쳐서 빈문자열 반환할랬더니 에러남
     @Override
     public String getName() {
-        return userDTO.getProviderId();
+        return userDetailsDTO.getProviderId();
     }
 
     //유저 구글 고유 아이디
     public  String getProviderId(){
-        return userDTO.getProviderId();
+        return userDetailsDTO.getProviderId();
     }
 
     //유저 아이디
-    public String getUsername() {return userDTO.getUsername();}
+    public String getUsername() {return userDetailsDTO.getUsername();}
     //유저 이메일
-    public String getUserEmail(){return userDTO.getEmail();}
+    public String getUserEmail(){return userDetailsDTO.getEmail();}
 
     //유저 프로필 사진
-    public String getAvatar(){return userDTO.getAvatar();}
+    public String getAvatar(){return userDetailsDTO.getAvatar();}
 }

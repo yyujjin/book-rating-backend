@@ -1,6 +1,6 @@
 package com.example.bookrating.util;
 
-import com.example.bookrating.dto.UserDTO;
+import com.example.bookrating.dto.UserDetailsDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
@@ -15,7 +15,7 @@ public class TokenExtractor {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public UserDTO getUserInfoFromToken(HttpServletRequest request) {
+    public UserDetailsDTO getUserInfoFromToken(HttpServletRequest request) {
 
         String token = getJwtFromCookies(request);
         if(token==null) return null;
@@ -26,12 +26,12 @@ public class TokenExtractor {
                     .parseClaimsJws(token)
                     .getBody();
 
-            UserDTO userDTO = new UserDTO();
+            UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
            //userDTO.setProviderId(claims.getSubject());
-            userDTO.setUsername(claims.get("username", String.class));
-            userDTO.setEmail(claims.get("email", String.class));
-            userDTO.setAvatar(claims.get("avatar", String.class));
-            return userDTO;
+            userDetailsDTO.setUsername(claims.get("username", String.class));
+            userDetailsDTO.setEmail(claims.get("email", String.class));
+            userDetailsDTO.setAvatar(claims.get("avatar", String.class));
+            return userDetailsDTO;
     }
 
     private String getJwtFromCookies (HttpServletRequest request){

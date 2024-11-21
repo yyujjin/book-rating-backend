@@ -1,6 +1,6 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.UserDTO;
+import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ public class UserService {
     }
 
     //유저 정보 저장(회원가입 완료)
-    public UserEntity saveUser(UserDTO userDTO) {
+    public UserEntity saveUser(UserDetailsDTO userDetailsDTO) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userDTO.getUsername());
+        userEntity.setUsername(userDetailsDTO.getUsername());
 
-        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
+        String encryptedPassword = passwordEncoder.encode(userDetailsDTO.getPassword());
         userEntity.setPassword(encryptedPassword);
 
         userEntity.setRole("ROLE_USER");

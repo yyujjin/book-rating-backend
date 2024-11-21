@@ -1,7 +1,7 @@
 package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
-import com.example.bookrating.dto.UserDTO;
+import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.dto.UserResponseDTO;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.entity.UserEntity;
@@ -36,16 +36,16 @@ public class UserController {
 
     //회원가입
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register (@RequestBody UserDTO userDTO) {
-        if(userService.findByUsername(userDTO.getUsername())){return  ResponseEntity.badRequest().build();}
+    public ResponseEntity<?> register (@RequestBody UserDetailsDTO userDetailsDTO) {
+        if(userService.findByUsername(userDetailsDTO.getUsername())){return  ResponseEntity.badRequest().build();}
 
-       return  ResponseEntity.ok().body(userService.saveUser(userDTO));
+       return  ResponseEntity.ok().body(userService.saveUser(userDetailsDTO));
     }
 
     //로그인
     //문서에는 json 요청이던데 form 로그인으로 하면 안되나?
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login (@ModelAttribute UserDTO userDTO) {
+    public ResponseEntity<?> login (@ModelAttribute UserDetailsDTO userDetailsDTO) {
         return  ResponseEntity.ok().body("로그인 완료");
     }
 
@@ -54,13 +54,13 @@ public class UserController {
     @GetMapping("/auth/me")
     public ResponseEntity<UserResponseDTO> login(HttpServletRequest request) {
 
-        UserDTO userDTO =  tokenExtractor.getUserInfoFromToken(request);
+        UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
 
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         //유저 아이디 빼내기
-        Optional<UserEntity> user = userRepository.findByUsername(userDTO.getUsername());
+        Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
         userResponseDTO.setId(user.get().getId());
-        userResponseDTO.setUsername(userDTO.getUsername());
+        userResponseDTO.setUsername(userDetailsDTO.getUsername());
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
 
         Optional<List<Review>> review = reviewRepository.getReviewsByUserId(user.get().getId());
@@ -78,7 +78,7 @@ public class UserController {
         }
         userResponseDTO.setReviews(reviewDTOList);
 
-        if(userDTO==null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(userDetailsDTO ==null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return ResponseEntity.ok(userResponseDTO);
 

@@ -30,17 +30,18 @@ public class ReviewController {
     BookService bookService;
 
     @Autowired
-    TokenExtractor tokenExtractor;
-
-    @Autowired
     UserRepository userRepository;
 
     @Autowired
     ReviewRepository reviewRepository;
 
+    @Autowired
+    TokenExtractor tokenExtractor;
+
     @GetMapping("/books/{bookId}/reviews")
     public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
         List<BookReviewsDTO> reviews =  reviewService.getReviews(bookId,page);
+
         if (reviews.isEmpty()) {return ResponseEntity.noContent().build();}
 
         return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
@@ -81,27 +82,9 @@ public class ReviewController {
 
         if (reviewDTO.getRating()<0||reviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
         if (reviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
-        Review review = new Review();
-        //토큰에서 유저 구글 고유아이디 가져옴
-        UserDetailsDTO userDetailsDTO = tokenExtractor.getUserInfoFromToken(request);
 
-        //guest 인 경우 (토큰 x)
-        if(userDetailsDTO ==null) {
-            review.setUserId(0L);
-        }
-        //로그인 유저 (토큰 O)
-        if(userDetailsDTO !=null){
-            //db에서 유저 정보 가져옴
-            UserEntity user = userRepository.findByProviderId(userDetailsDTO.getProviderId());
-            //유저 고유 아이디 저장
-            if(user!=null)  review.setUserId(user.getId());
-            //유저 프로필 사진 저장
-            review.setUserAvatar(userDetailsDTO.getAvatar());
-        }
-        review.setRating(reviewDTO.getRating());
-        review.setContent(reviewDTO.getContent());
+        boolean isReviewPosted = reviewService.postReview(bookId,reviewDTO,request);
 
-        boolean isReviewPosted = reviewService.postReview(bookId,review);
         if (!isReviewPosted) return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");
 
         return ResponseEntity.ok().body("리뷰가 등록되었습니다.");

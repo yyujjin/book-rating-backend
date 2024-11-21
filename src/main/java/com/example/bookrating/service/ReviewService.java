@@ -3,8 +3,12 @@ package com.example.bookrating.service;
 import com.example.bookrating.dto.*;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
+import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.BookRepository;
 import com.example.bookrating.repository.ReviewRepository;
+import com.example.bookrating.repository.UserRepository;
+import com.example.bookrating.util.TokenExtractor;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,28 +25,24 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
+    private final TokenExtractor tokenExtractor;
+    private final UserRepository userRepository;
 
-    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository) {
+    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository, TokenExtractor tokenExtractor, UserRepository userRepository) {
         this.reviewRepository = reviewRepository;
         this.bookRepository = bookRepository;
+        this.tokenExtractor = tokenExtractor;
+        this.userRepository = userRepository;
     }
 
     public List<BookReviewsDTO> getReviews(Long bookId, int page){
 
-       // ReviewListDTO reviewListDTO = new ReviewListDTO();
-        //List<ReviewDTO> reviewDTOList = new ArrayList<>();
-
         List<BookReviewsDTO> bookReviewsDTOList = new ArrayList<>();
-
-
 
         Pageable pageable = PageRequest.of(page-1, 100, Sort.by("id").descending());
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
-
         for (Review r : reviewList ){
-           // ReviewDTO dto = new ReviewDTO(review.getId(),review.getBook().getId(), review.getRating(),review.getContent(),review.getUpdatedAt(),review.getUserId(),review.getUserAvatar());
-            //reviewDTOList.add(dto);
 
             ReviewDetailDTO review = new ReviewDetailDTO();
 
@@ -60,20 +60,45 @@ public class ReviewService {
         }
 
         //평균 조회
-       // reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
+        // reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
 
         return bookReviewsDTOList;
     }
 
-    public boolean postReview(Long bookId, Review review){
-        log.info("bookId:{}",bookId,"review:{}",review);
-        Optional<Book>book = bookRepository.findById(bookId);
+    public boolean postReview(Long bookId, ReviewDTO reviewDTO, HttpServletRequest request){
 
-        if (book.isEmpty()){return false;}
-        review.setBook(book.get());
-        review.prePersist();
-        reviewRepository.save(review);
-        return true;
+        Review review = new Review();
+        //토큰에서 유저 구글 고유아이디 가져옴
+        UserDetailsDTO userDetailsDTO = tokenExtractor.getUserInfoFromToken(request);
+
+        //guest 인 경우 (토큰 x)
+        if(userDetailsDTO ==null) {
+            review.setUserId(0L);
+        }
+        //로그인 유저 (토큰 O)
+        if(userDetailsDTO !=null){
+            //db에서 유저 정보 가져옴
+            UserEntity user = userRepository.findByProviderId(userDetailsDTO.getProviderId());
+            if(user!=null) {
+                review.setUsername(user.getUsername());
+                review.setUserId(user.getId());
+                //유저 프로필 사진 저장
+                //review.setUserAvatar(userDetailsDTO.getAvatar());
+            }
+            review.setRating(reviewDTO.getRating());
+            review.setContent(reviewDTO.getContent());
+
+            //여기서 엔티티로 책 정보 가져와서 그걸 저장하는게 낫나?
+            //아니면 그냥 책 아이디만 저장하는게 낫나?
+            Optional<Book>book = bookRepository.findById(bookId);
+
+            if (book.isEmpty()){return false;}
+            review.setBook(book.get());
+            review.prePersist();
+            reviewRepository.save(review);
+            return true;
+        }
+      return false;
     }
 
     //리뷰 존재 여부

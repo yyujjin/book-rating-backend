@@ -59,7 +59,7 @@ public class SecurityConfig {
 
 //                //경로별 인가 작업
 //                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/tags","/loginInfo","/login").permitAll()
+//                        .requestMatchers("/tags","/auth/me","/auth/login").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
 //                        .anyRequest().authenticated()
 //                )
@@ -75,7 +75,7 @@ public class SecurityConfig {
                 )
 
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/auth/logout")
                         .invalidateHttpSession(true)  // 세션 무효화 //여기서 세션 쓰고 있네
                         .deleteCookies("JSESSIONID", "jwt")  //JSESSIONID: 세션 식별 쿠키/jwt : 토큰을 저장하는 쿠키 삭제
                         .logoutSuccessHandler((request, response, authentication) -> {

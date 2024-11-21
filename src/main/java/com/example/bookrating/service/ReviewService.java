@@ -60,6 +60,43 @@ public class ReviewService {
         return bookReviewsDTOList;
     }
 
+    //로그인한 사용자의 리뷰조회
+    public List<ReviewDetailDTO> getUserReviewByBookId(Long bookId, HttpServletRequest request) {
+        //토큰에서 사용자 정보 추출
+        UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
+        List<ReviewDetailDTO> reviewList = new ArrayList<>();
+        //유저 아이디 빼내기
+        Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
+        //사용자의 리뷰 전체 가져오기
+        Optional<List<Review>> reviews = reviewRepository.getReviewsByUserId(user.get().getId());
+        for(Review r : reviews.get()) {
+            if(r.getBook().getId().equals(bookId)) {
+                //ReviewDTO reviewDTO = new ReviewDTO();
+             /*   reviewDTO.setId(r.getId());
+                reviewDTO.setRating(r.getRating());
+                reviewDTO.setContent(r.getContent());
+                reviewDTO.setUpdatedAt(r.getUpdatedAt());
+
+                reviewDTO.setUserId(userId);
+                reviewDTOList.add(reviewDTO);
+              */
+
+                ReviewDetailDTO dto = new ReviewDetailDTO();
+                UserDTO userDTO = new UserDTO();
+                dto.setId(r.getId());
+                dto.setRating(r.getRating());
+                dto.setContent(r.getContent());
+                dto.setUpdatedAt(r.getUpdatedAt());
+                userDTO.setId(r.getUserId());
+                userDTO.setUsername(r.getUsername());
+                dto.setUser(userDTO);
+
+                reviewList.add(dto);
+            }
+        }
+        return reviewList;
+    }
+
     public boolean postReview(Long bookId, ReviewDTO reviewDTO, HttpServletRequest request){
 
         Review review = new Review();

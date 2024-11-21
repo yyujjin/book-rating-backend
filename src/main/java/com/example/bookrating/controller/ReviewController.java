@@ -2,9 +2,8 @@ package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.dto.BookReviewsDTO;
-import com.example.bookrating.dto.UserDetailsDTO;
+import com.example.bookrating.dto.ReviewDetailDTO;
 import com.example.bookrating.entity.Review;
-import com.example.bookrating.entity.UserEntity;
 import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.BookService;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,30 +41,10 @@ public class ReviewController {
     @GetMapping("/books/{bookId}/reviews/my-review")
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
-        UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
-        List<ReviewDTO> reviewDTOList = new ArrayList<>();
-        //유저 아이디 빼내기
-        Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
-        Long userId = user.get().getId();
-        //사용자의 리뷰 전체 가져오기
-        Optional<List<Review>> reviews = reviewRepository.getReviewsByUserId(userId);
-        for(Review r : reviews.get()) {
-            if(r.getBook().getId().equals(bookId)) {
-                ReviewDTO reviewDTO = new ReviewDTO();
-                reviewDTO.setId(r.getId());
-                reviewDTO.setRating(r.getRating());
-                reviewDTO.setContent(r.getContent());
-                reviewDTO.setUpdatedAt(r.getUpdatedAt());
-                //이걸 위해서 또 dto를 만들어야 하나?
-                // /auth/me 랑 동일하게 만들면 안되나?
-                reviewDTO.setUserId(userId);
-                reviewDTOList.add(reviewDTO);
-            }
-        }
-        //작성한 리뷰 없을경우 204코드 반환
-        if (reviewDTOList.isEmpty()){return ResponseEntity.status(204).build();}
+        List<ReviewDetailDTO> review = reviewService.getUserReviewByBookId(bookId,request);
+        if(review.isEmpty()){return ResponseEntity.status(204).build();}
 
-        return ResponseEntity.ok().body(reviewDTOList);
+        return ResponseEntity.ok().body(review);
     }
 
     @PostMapping("/books/{bookId}/reviews")

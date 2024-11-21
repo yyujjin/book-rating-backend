@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 @Data
 public class ReviewDetailDTO {
     private Long id;
-    private int rating;
     private String content;
+    private int rating;
     private LocalDateTime updatedAt;
-    private UserDTO user;
 }

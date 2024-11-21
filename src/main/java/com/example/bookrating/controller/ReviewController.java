@@ -2,7 +2,8 @@ package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.ReviewDTO;
 import com.example.bookrating.dto.BookReviewsDTO;
-import com.example.bookrating.dto.ReviewDetailDTO;
+import com.example.bookrating.dto.ReviewResponseDTO;
+import com.example.bookrating.dto.ReviewWithUserDTO;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.UserRepository;
@@ -53,11 +54,11 @@ public class ReviewController {
         if (reviewDTO.getRating()<0||reviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
         if (reviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
 
-        boolean isReviewPosted = reviewService.postReview(bookId,reviewDTO,request);
+        ReviewResponseDTO postedReview = reviewService.postReview(bookId,reviewDTO,request);
 
-        if (!isReviewPosted) return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");
+        if (postedReview==null) { return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");}
 
-        return ResponseEntity.ok().body("리뷰가 등록되었습니다.");
+        return ResponseEntity.ok().body(postedReview);
     }
 
     @PatchMapping("books/{bookId}/reviews/{reviewId}")

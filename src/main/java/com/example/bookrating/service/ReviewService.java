@@ -45,7 +45,6 @@ public class ReviewService {
             review.setRating(r.getRating());
             review.setContent(r.getContent());
             review.setUpdatedAt(r.getUpdatedAt());
-            //일단 임시로 아바타 넣음 원래는 유저네임 넣어야함
             review.setUser(new UserDTO(r.getUserId(),r.getUsername()));
             BookReviewsDTO responseDTO = new BookReviewsDTO();
             responseDTO.setBookId(r.getBook().getId());
@@ -54,9 +53,6 @@ public class ReviewService {
             bookReviewsDTOList.add(responseDTO);
         }
 
-        //평균 조회
-        // reviewListDTO.setAverageRating(calculateAverage(getRatings(bookId)));
-
         return bookReviewsDTOList;
     }
 
@@ -64,18 +60,13 @@ public class ReviewService {
     public List<ReviewWithUserDTO> getUserReviewByBookId(Long bookId, HttpServletRequest request) {
         //토큰에서 사용자 정보 추출
         UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
-        List<ReviewDetailDTO> reviewList = new ArrayList<>();
+        List<ReviewWithUserDTO> reviewList = new ArrayList<>();
         //유저 아이디 빼내기
         Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
         //사용자의 리뷰 전체 가져오기
         Optional<List<Review>> reviews = reviewRepository.getReviewsByUserId(user.get().getId());
         for(Review r : reviews.get()) {
             if(r.getBook().getId().equals(bookId)) {
-                //ReviewDTO reviewDTO = new ReviewDTO();
-             /*   reviewDTO.setId(r.getId());
-                reviewDTO.setRating(r.getRating());
-                reviewDTO.setContent(r.getContent());
-                reviewDTO.setUpdatedAt(r.getUpdatedAt());
 
                 ReviewWithUserDTO dto = new ReviewWithUserDTO();
                 UserDTO userDTO = new UserDTO();
@@ -93,7 +84,7 @@ public class ReviewService {
         return reviewList;
     }
 
-    public boolean postReview(Long bookId, ReviewDTO reviewDTO, HttpServletRequest request){
+    public ReviewResponseDTO postReview(Long bookId, ReviewDTO reviewDTO, HttpServletRequest request){
 
         Review review = new Review();
         //토큰에서 유저 구글 고유아이디 가져옴
@@ -116,17 +107,25 @@ public class ReviewService {
             review.setRating(reviewDTO.getRating());
             review.setContent(reviewDTO.getContent());
 
-            //여기서 엔티티로 책 정보 가져와서 그걸 저장하는게 낫나?
-            //아니면 그냥 책 아이디만 저장하는게 낫나?
+            //todo:책 엔티티를 저장할지 책 id만 저장할지 생각해봐야할듯
             Optional<Book>book = bookRepository.findById(bookId);
 
-            if (book.isEmpty()){return false;}
+            if (book.isEmpty()){return null;}
             review.setBook(book.get());
             review.prePersist();
-            reviewRepository.save(review);
-            return true;
+            Review savedReview =  reviewRepository.save(review);
+
+            ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO();
+            ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO();
+            reviewDetailDTO.setId(savedReview.getId());
+            reviewDetailDTO.setContent(savedReview.getContent());
+            reviewDetailDTO.setRating(savedReview.getRating());
+            reviewDetailDTO.setUpdatedAt(savedReview.getUpdatedAt());
+            reviewResponseDTO.setReview(reviewDetailDTO);
+            reviewResponseDTO.setAverageRating(calculateAverage(getRatings(bookId)));
+            return reviewResponseDTO;
         }
-      return false;
+     return null;
     }
 
     //리뷰 존재 여부

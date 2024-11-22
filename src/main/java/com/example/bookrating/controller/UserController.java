@@ -9,6 +9,8 @@ import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.UserService;
 import com.example.bookrating.util.TokenExtractor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin
+@Tag(name = "User", description = "사용자 관리 API")
 public class UserController {
 
     private final TokenExtractor tokenExtractor;
@@ -30,20 +33,22 @@ public class UserController {
 
     //회원가입
     @PostMapping("/auth/register")
+    @Operation(summary = "회원가입", description = "새로운 사용자를 등록합니다.")
     public ResponseEntity<?> register (@RequestBody UserDetailsDTO userDetailsDTO) {
         if(userService.findByUsername(userDetailsDTO.getUsername())){return  ResponseEntity.badRequest().build();}
 
        return  ResponseEntity.ok().body(userService.saveUser(userDetailsDTO));
     }
 
-    //문서에는 json 요청이던데 form 로그인으로 하면 안되나?
     @PostMapping("/auth/login")
+    @Operation(summary = "로그인", description = "폼 기반 로그인을 처리합니다. 사용자 이름과 비밀번호를 제출하여 로그인합니다.")
     public ResponseEntity<?> login (@ModelAttribute UserDetailsDTO userDetailsDTO) {
         return  ResponseEntity.ok().body("로그인 완료");
     }
 
     //유저 정보 반환
     @GetMapping("/auth/me")
+    @Operation(summary = "사용자 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다. 포함된 리뷰 목록도 조회됩니다.")
     public ResponseEntity<UserResponseDTO> login(HttpServletRequest request) {
 
         UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);

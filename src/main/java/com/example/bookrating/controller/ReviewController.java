@@ -10,6 +10,8 @@ import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
 import com.example.bookrating.util.TokenExtractor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin
+@Tag(name = "Review", description = "리뷰 관리 API")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -30,6 +33,7 @@ public class ReviewController {
     private final TokenExtractor tokenExtractor;
 
     @GetMapping("/books/{bookId}/reviews")
+    @Operation(summary = "책 리뷰 조회", description = "특정 책에 대한 리뷰 목록을 페이지 단위로 100개씩 조회합니다.")
     public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
         List<BookReviewsDTO> reviews =  reviewService.getReviews(bookId,page);
 
@@ -40,6 +44,7 @@ public class ReviewController {
 
     //로그인한 사용자의 리뷰 조회
     @GetMapping("/books/{bookId}/reviews/my-review")
+    @Operation(summary = "사용자의 리뷰 조회", description = "로그인한 사용자가 특정 책에 남긴 리뷰를 조회합니다.")
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
         List<ReviewWithUserDTO> review = reviewService.getUserReviewByBookId(bookId,request);
@@ -49,6 +54,7 @@ public class ReviewController {
     }
 
     @PostMapping("/books/{bookId}/reviews")
+    @Operation(summary = "리뷰 등록", description = "특정 책에 대해 별점과 내용을 포함한 리뷰를 등록합니다. 별점은 0에서 5 사이만 가능합니다.")
     public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){
 
         if (userProfileReviewDTO.getRating()<0|| userProfileReviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
@@ -62,6 +68,7 @@ public class ReviewController {
     }
 
     @PatchMapping("books/{bookId}/reviews/{reviewId}")
+    @Operation(summary = "리뷰 수정", description = "특정 책과 리뷰 ID를 기반으로 리뷰 내용을 수정합니다.")
     public ResponseEntity<?>patchReview(@PathVariable Long bookId,@PathVariable Long reviewId,@RequestBody String content){
 
         //리뷰 찾기
@@ -77,6 +84,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/books/{bookId}/reviews/{reviewId}")
+    @Operation(summary = "리뷰 삭제", description = "특정 책과 리뷰 ID를 기반으로 리뷰를 삭제합니다. 존재하지 않는 책이나 리뷰일 경우 에러 메시지를 반환합니다.")
     public ResponseEntity<?>deleteReview(@PathVariable Long bookId,@PathVariable Long reviewId){
         //없는 book
         if (bookService.getBookById(bookId).isEmpty()){

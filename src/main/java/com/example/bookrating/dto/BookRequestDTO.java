@@ -1,14 +1,13 @@
 package com.example.bookrating.dto;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
-public class ResponseBookDTO {
-    private Long id;
+public class BookRequestDTO {
     private String isbn;
     private String title;
-    private List<TagDTO> tags;
-    private double averageRating;
+    private List<Long> tags;
     private String thumbnail;
 }

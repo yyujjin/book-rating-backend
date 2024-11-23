@@ -1,7 +1,7 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.RequestBookDTO;
-import com.example.bookrating.dto.ResponseBookDTO;
+import com.example.bookrating.dto.BookRequestDTO;
+import com.example.bookrating.dto.BookResponseDTO;
 import com.example.bookrating.dto.TagDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
@@ -27,12 +27,12 @@ public class BookService {
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
 
-    public ResponseBookDTO getBook(Long id) {
+    public BookResponseDTO getBook(Long id) {
         Optional<Book> book = bookRepository.findById(id);
 
         if(book.isEmpty()){return null;}
 
-        ResponseBookDTO dto = new ResponseBookDTO();
+        BookResponseDTO dto = new BookResponseDTO();
         dto.setId(book.get().getId());
         dto.setIsbn(book.get().getIsbn());
         dto.setTitle(book.get().getTitle());
@@ -53,12 +53,12 @@ public class BookService {
     }
 
     //100개씩 페이징 처리
-    public List<ResponseBookDTO> getBooksByPaging(int page) {
+    public List<BookResponseDTO> getBooksByPaging(int page) {
         Pageable pageable = PageRequest.of(page-1, 100); // 한 페이지에 10개의 아이템
         List<Book> bookList =  bookRepository.findAll(pageable).getContent();
-        List<ResponseBookDTO> bookDTO = new ArrayList<>();
+        List<BookResponseDTO> bookDTO = new ArrayList<>();
         for(Book book : bookList) {
-            ResponseBookDTO dto = new ResponseBookDTO();
+            BookResponseDTO dto = new BookResponseDTO();
             dto.setId(book.getId());
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
@@ -92,7 +92,7 @@ public class BookService {
     }
 
     //책 저장
-    public void createBook(RequestBookDTO bookDTO) {
+    public void createBook(BookRequestDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
@@ -114,9 +114,9 @@ public class BookService {
     }
 
     //isbn으로 책 찾기
-    public ResponseBookDTO getBookByIsbn(String isbn) {
+    public BookResponseDTO getBookByIsbn(String isbn) {
         Optional<Book> book = bookRepository.findByIsbn(isbn);
-        ResponseBookDTO bookDTO = new ResponseBookDTO();
+        BookResponseDTO bookDTO = new BookResponseDTO();
         bookDTO.setId(book.get().getId());
         bookDTO.setIsbn(book.get().getIsbn());
         bookDTO.setTitle(book.get().getTitle());

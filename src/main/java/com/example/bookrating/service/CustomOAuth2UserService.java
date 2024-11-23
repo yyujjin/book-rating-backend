@@ -1,6 +1,6 @@
 package com.example.bookrating.service;
 
-import com.example.bookrating.dto.CustomOAuth2User;
+import com.example.bookrating.dto.CustomOAuth2UserDTO;
 import com.example.bookrating.dto.GoogleResponseDTO;
 import com.example.bookrating.dto.UserDetailsDTO;
 import com.example.bookrating.entity.UserEntity;
@@ -42,6 +42,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userDetailsDTO.setAvatar(googleResponseDTO.getPicture());
         userDetailsDTO.setRole("ROLE_USER");
 
-        return new CustomOAuth2User(userDetailsDTO);
+        return new CustomOAuth2UserDTO(userDetailsDTO);
     }
 }

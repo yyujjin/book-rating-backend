@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuth2UserDTO implements OAuth2User {
 
 private final UserDetailsDTO userDetailsDTO;
 
-    public CustomOAuth2User(UserDetailsDTO userDetailsDTO) {
+    public CustomOAuth2UserDTO(UserDetailsDTO userDetailsDTO) {
         this.userDetailsDTO = userDetailsDTO;
     }
 

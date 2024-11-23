@@ -1,6 +1,6 @@
 package com.example.bookrating.config;
 
-import com.example.bookrating.dto.CustomOAuth2User;
+import com.example.bookrating.dto.CustomOAuth2UserDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.IOException;
@@ -33,17 +33,17 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
         String token = null;
         authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication.getPrincipal() instanceof CustomOAuth2User) {
+        if (authentication.getPrincipal() instanceof CustomOAuth2UserDTO) {
             // OAuth2 로그인 사용자
-            CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-            System.out.println("OAuth2 사용자 정보: " + customOAuth2User.getAttributes());
+            CustomOAuth2UserDTO customOAuth2UserDTO = (CustomOAuth2UserDTO) authentication.getPrincipal();
+            System.out.println("OAuth2 사용자 정보: " + customOAuth2UserDTO.getAttributes());
             token = Jwts.builder()
-                    .setSubject(customOAuth2User.getProviderId()) // 구글 고유 아이디
+                    .setSubject(customOAuth2UserDTO.getProviderId()) // 구글 고유 아이디
                     //.claim("authorities", authentication.getAuthorities()) // 권한 정보
                     // .claim("username", userSessionService.getUserName())
-                    .claim("email", customOAuth2User.getUserEmail())
-                    .claim("avatar", customOAuth2User.getAvatar())
-                    .claim("username",customOAuth2User.getUsername())
+                    .claim("email", customOAuth2UserDTO.getUserEmail())
+                    .claim("avatar", customOAuth2UserDTO.getAvatar())
+                    .claim("username", customOAuth2UserDTO.getUsername())
                     .setIssuedAt(new Date()) //JWT 토큰이 발급된 시간
                     .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1일 유효
                     .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // 서명 알고리즘

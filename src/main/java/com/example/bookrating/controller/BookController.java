@@ -26,6 +26,17 @@ public class BookController {
     private final BookService bookService;
     private final ReviewService reviewService;
 
+    @GetMapping("/books/{id}")
+    @Operation(summary = "책 조회", description = "ID로 특정 책을 조회합니다.")
+    public ResponseEntity<?>getBook(@PathVariable Long id) {
+
+        if(id==null || id<1) {return ResponseEntity.status(400).body("ID는 필수 입력값이며, 양수이어야 합니다."); }
+        ResponseBookDTO gotBook = bookService.getBook(id);
+        if (gotBook == null) {return ResponseEntity.status(404).body("요청한 ID의 책이 존재하지 않습니다.");}
+
+        return  ResponseEntity.ok(gotBook);
+    }
+
     @GetMapping("/books")
     @Operation(summary = "책 목록 조회", description = "페이지 번호를 기준으로 책 목록을 100개씩 조회합니다.")
     public ResponseEntity<List<ResponseBookDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {

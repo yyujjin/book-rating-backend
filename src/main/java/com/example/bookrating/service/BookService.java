@@ -27,6 +27,27 @@ public class BookService {
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
 
+    public ResponseBookDTO getBook(Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+
+        if(book.isEmpty()){return null;}
+
+        ResponseBookDTO dto = new ResponseBookDTO();
+        dto.setId(book.get().getId());
+        dto.setIsbn(book.get().getIsbn());
+        dto.setTitle(book.get().getTitle());
+        Set<Tag> tags = book.get().getTags();
+        List<TagDTO> tagDTOList = new ArrayList<>();
+        for(Tag t : tags){
+            TagDTO tagDTO = new TagDTO(t.getId(),t.getName());
+            tagDTOList.add(tagDTO);
+        }
+        dto.setTags(tagDTOList);
+        dto.setAverageRating(dto.getAverageRating());
+        dto.setThumbnail(book.get().getThumbnail());
+        return dto;
+    }
+
     public List<Book> getBooks () {
         return bookRepository.findAll();
     }
@@ -41,7 +62,7 @@ public class BookService {
             dto.setId(book.getId());
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
-            dto.setThumbnail(book.getBookCoverUrl());
+            dto.setThumbnail(book.getThumbnail());
             dto.setAverageRating(reviewService.calculateAverage(reviewService.getRatings(book.getId())));
 
             dto.setTags(
@@ -75,7 +96,7 @@ public class BookService {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
-        book.setBookCoverUrl(bookDTO.getThumbnail());
+        book.setThumbnail(bookDTO.getThumbnail());
 
         Set<Tag> tags = bookDTO.getTags()
                 .stream()
@@ -100,7 +121,7 @@ public class BookService {
         bookDTO.setIsbn(book.get().getIsbn());
         bookDTO.setTitle(book.get().getTitle());
         bookDTO.setAverageRating(book.get().getAverage());
-        bookDTO.setThumbnail(book.get().getBookCoverUrl());
+        bookDTO.setThumbnail(book.get().getThumbnail());
         bookDTO.setTags(
                 book.get().getTags()
                         .stream()

@@ -27,12 +27,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException,AuthenticationException {
 
         String token = getJwtFromCookies(request);
-        System.out.println("토큰 검사를 시작합니다. " + token);
+        System.out.println("토큰 검사를 시작합니다. :" + token);
 
         if(token != null) {
             try {
                 String subject = jwtUtil.parseToken(token);
-                System.out.println("사용자의 subject : "+subject); //구글-> providerId, 일반 -> userId
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);

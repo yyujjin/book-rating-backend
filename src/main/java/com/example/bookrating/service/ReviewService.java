@@ -171,9 +171,7 @@ public class ReviewService {
         try {
             return Math.round (num/ratings.size()*100) /100.0;
         }catch(ArithmeticException e){
-            log.info("0을 나눌 수 없습니다. ");
-        };
-
-        return  0;
+            return  0;
+        }
     }
 }

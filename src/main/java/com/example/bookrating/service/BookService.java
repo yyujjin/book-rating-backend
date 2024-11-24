@@ -1,7 +1,8 @@
 package com.example.bookrating.service;
 
 import com.example.bookrating.dto.BookRequestDTO;
-import com.example.bookrating.dto.BookResponseDTO;
+import com.example.bookrating.dto.BookResponseDetailDTO;
+import com.example.bookrating.dto.BookResponseSummaryDTO;
 import com.example.bookrating.dto.TagDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.entity.Review;
@@ -27,12 +28,12 @@ public class BookService {
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
 
-    public BookResponseDTO getBook(Long id) {
+    public BookResponseDetailDTO getBook(Long id) {
         Optional<Book> book = bookRepository.findById(id);
 
         if(book.isEmpty()){return null;}
 
-        BookResponseDTO dto = new BookResponseDTO();
+        BookResponseDetailDTO dto = new BookResponseDetailDTO();
         dto.setId(book.get().getId());
         dto.setIsbn(book.get().getIsbn());
         dto.setTitle(book.get().getTitle());
@@ -45,6 +46,10 @@ public class BookService {
         dto.setTags(tagDTOList);
         dto.setAverageRating(dto.getAverageRating());
         dto.setThumbnail(book.get().getThumbnail());
+        dto.setContents(book.get().getContents());
+        dto.setDatetime(book.get().getDatetime());
+        dto.setAuthors(book.get().getAuthors());
+        dto.setPublisher(book.get().getPublisher());
         return dto;
     }
 
@@ -53,12 +58,12 @@ public class BookService {
     }
 
     //100개씩 페이징 처리
-    public List<BookResponseDTO> getBooksByPaging(int page) {
+    public List<BookResponseSummaryDTO> getBooksByPaging(int page) {
         Pageable pageable = PageRequest.of(page-1, 100); // 한 페이지에 10개의 아이템
         List<Book> bookList =  bookRepository.findAll(pageable).getContent();
-        List<BookResponseDTO> bookDTO = new ArrayList<>();
+        List<BookResponseSummaryDTO> bookDTO = new ArrayList<>();
         for(Book book : bookList) {
-            BookResponseDTO dto = new BookResponseDTO();
+            BookResponseSummaryDTO dto = new BookResponseSummaryDTO();
             dto.setId(book.getId());
             dto.setIsbn(book.getIsbn());
             dto.setTitle(book.getTitle());
@@ -92,7 +97,7 @@ public class BookService {
     }
 
     //책 저장
-    public BookResponseDTO createBook(BookRequestDTO bookDTO) {
+    public BookResponseDetailDTO createBook(BookRequestDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
@@ -110,7 +115,7 @@ public class BookService {
         book.setTags(tags);
         try{
             Book savedBook =  bookRepository.save(book);
-            BookResponseDTO responseDTO = new BookResponseDTO();
+            BookResponseDetailDTO responseDTO = new BookResponseDetailDTO();
             responseDTO.setId(savedBook.getId());
             responseDTO.setIsbn(savedBook.getIsbn());
             responseDTO.setTitle(savedBook.getTitle());
@@ -142,9 +147,9 @@ public class BookService {
     }
 
     //isbn으로 책 찾기
-    public BookResponseDTO getBookByIsbn(String isbn) {
+    public BookResponseSummaryDTO getBookByIsbn(String isbn) {
         Optional<Book> book = bookRepository.findByIsbn(isbn);
-        BookResponseDTO bookDTO = new BookResponseDTO();
+        BookResponseSummaryDTO bookDTO = new BookResponseSummaryDTO();
         bookDTO.setId(book.get().getId());
         bookDTO.setIsbn(book.get().getIsbn());
         bookDTO.setTitle(book.get().getTitle());

@@ -1,7 +1,8 @@
 package com.example.bookrating.controller;
 
 import com.example.bookrating.dto.BookRequestDTO;
-import com.example.bookrating.dto.BookResponseDTO;
+import com.example.bookrating.dto.BookResponseDetailDTO;
+import com.example.bookrating.dto.BookResponseSummaryDTO;
 import com.example.bookrating.entity.Book;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
@@ -31,7 +32,7 @@ public class BookController {
     public ResponseEntity<?>getBook(@PathVariable Long id) {
 
         if(id==null || id<1) {return ResponseEntity.status(400).body("ID는 필수 입력값이며, 양수이어야 합니다."); }
-        BookResponseDTO gotBook = bookService.getBook(id);
+        BookResponseDetailDTO gotBook = bookService.getBook(id);
         if (gotBook == null) {return ResponseEntity.status(404).body("요청한 ID의 책이 존재하지 않습니다.");}
 
         return  ResponseEntity.ok(gotBook);
@@ -39,7 +40,7 @@ public class BookController {
 
     @GetMapping("/books")
     @Operation(summary = "책 목록 조회", description = "페이지 번호를 기준으로 책 목록을 100개씩 조회합니다.")
-    public ResponseEntity<List<BookResponseDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<List<BookResponseSummaryDTO>> getBooks(@RequestParam(defaultValue = "1") int page) {
 
         return  ResponseEntity.ok().body(bookService.getBooksByPaging(page));
     }
@@ -52,7 +53,7 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
         }
 
-        BookResponseDTO createdBook =  bookService.createBook(bookDTO);
+        BookResponseDetailDTO createdBook =  bookService.createBook(bookDTO);
 
         return ResponseEntity.status(201).body(createdBook);
     }

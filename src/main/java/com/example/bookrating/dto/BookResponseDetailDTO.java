@@ -1,10 +1,11 @@
 package com.example.bookrating.dto;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
-public class BookResponseDTO {
+public class BookResponseDetailDTO {
     private Long id;
     private String isbn;
     private String title;

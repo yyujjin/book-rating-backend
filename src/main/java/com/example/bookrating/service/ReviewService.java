@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +31,23 @@ public class ReviewService {
     private final TokenExtractor tokenExtractor;
     private final UserRepository userRepository;
 
-    public List<BookReviewsDTO> getReviews(Long bookId, int page){
-
-        List<BookReviewsDTO> bookReviewsDTOList = new ArrayList<>();
+    public BookReviewsDTO getReviews(Long bookId, int page){
 
         Pageable pageable = PageRequest.of(page-1, 100, Sort.by("id").descending());
         Page<Review> reviewList= reviewRepository.findByBookId(bookId,pageable);
 
+
+        if (reviewList.isEmpty()){
+            BookReviewsDTO bookReviewsDTO = new BookReviewsDTO();
+            bookReviewsDTO.setBookId(bookId);
+            // 빈 리스트 설정
+            bookReviewsDTO.setReviews(Collections.emptyList());
+
+            return bookReviewsDTO;
+        }
+
+        List<ReviewWithUserDTO> reviewWithUserDTOS = new ArrayList<>();
+        BookReviewsDTO responseDTO = new BookReviewsDTO();
         for (Review r : reviewList ){
 
             ReviewWithUserDTO review = new ReviewWithUserDTO();
@@ -46,42 +57,36 @@ public class ReviewService {
             review.setContent(r.getContent());
             review.setUpdatedAt(r.getUpdatedAt());
             review.setUser(new UserDTO(r.getUserId(),r.getUsername()));
-            BookReviewsDTO responseDTO = new BookReviewsDTO();
+
             responseDTO.setBookId(r.getBook().getId());
-            responseDTO.setReviews(review);
-
-            bookReviewsDTOList.add(responseDTO);
+            reviewWithUserDTOS.add(review);
+            responseDTO.setReviews(reviewWithUserDTOS);
         }
-
-        return bookReviewsDTOList;
+        return responseDTO;
     }
 
     //로그인한 사용자의 리뷰조회
-    public List<ReviewWithUserDTO> getUserReviewByBookId(Long bookId, HttpServletRequest request) {
+    public ReviewDetailDTO getUserReviewByBookId(Long bookId, HttpServletRequest request) {
         //토큰에서 사용자 정보 추출
         UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
-        List<ReviewWithUserDTO> reviewList = new ArrayList<>();
+
         //유저 아이디 빼내기
         Optional<UserEntity> user = userRepository.findByUsername(userDetailsDTO.getUsername());
         //사용자의 리뷰 전체 가져오기
         Optional<List<Review>> reviews = reviewRepository.getReviewsByUserId(user.get().getId());
+
+        ReviewDetailDTO dto = new ReviewDetailDTO();
         for(Review r : reviews.get()) {
             if(r.getBook().getId().equals(bookId)) {
-
-                ReviewWithUserDTO dto = new ReviewWithUserDTO();
-                UserDTO userDTO = new UserDTO();
                 dto.setId(r.getId());
                 dto.setRating(r.getRating());
                 dto.setContent(r.getContent());
                 dto.setUpdatedAt(r.getUpdatedAt());
-                userDTO.setId(r.getUserId());
-                userDTO.setUsername(r.getUsername());
-                dto.setUser(userDTO);
-
-                reviewList.add(dto);
             }
         }
-        return reviewList;
+        if (dto.getId()==null){return null;}
+
+        return dto;
     }
 
     public ReviewResponseDTO postReview(Long bookId, UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){

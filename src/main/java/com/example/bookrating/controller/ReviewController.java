@@ -1,9 +1,6 @@
 package com.example.bookrating.controller;
 
-import com.example.bookrating.dto.UserProfileReviewDTO;
-import com.example.bookrating.dto.BookReviewsDTO;
-import com.example.bookrating.dto.ReviewResponseDTO;
-import com.example.bookrating.dto.ReviewWithUserDTO;
+import com.example.bookrating.dto.*;
 import com.example.bookrating.entity.Review;
 import com.example.bookrating.repository.ReviewRepository;
 import com.example.bookrating.repository.UserRepository;
@@ -14,13 +11,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin
@@ -35,22 +32,20 @@ public class ReviewController {
 
     @GetMapping("/books/{bookId}/reviews")
     @Operation(summary = "책 리뷰 조회", description = "특정 책에 대한 리뷰 목록을 페이지 단위로 100개씩 조회합니다.")
-    public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
-        List<BookReviewsDTO> reviews =  reviewService.getReviews(bookId,page);
+    public ResponseEntity<BookReviewsDTO> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
+        BookReviewsDTO review =  reviewService.getReviews(bookId,page);
 
-        if (reviews.isEmpty()) { return ResponseEntity.ok(Collections.emptyList());}
-
-        return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
+        return ResponseEntity.ok().body(review);
     }
 
 
-    //로그인한 사용자의 리뷰 조회
+    //로그인한 사용자의 특정 책에 대한 리뷰 조회(하나만 반환)
     @GetMapping("/books/{bookId}/reviews/my-review")
     @Operation(summary = "사용자의 리뷰 조회", description = "로그인한 사용자가 특정 책에 남긴 리뷰를 조회합니다.")
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
-        List<ReviewWithUserDTO> review = reviewService.getUserReviewByBookId(bookId,request);
-        if(review.isEmpty()){return ResponseEntity.ok(Collections.emptyList());}
+        ReviewDetailDTO review = reviewService.getUserReviewByBookId(bookId,request);
+        if(review==null){return ResponseEntity.notFound().build();}
 
         return ResponseEntity.ok().body(review);
     }

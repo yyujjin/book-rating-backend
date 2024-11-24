@@ -3,35 +3,27 @@ package com.example.bookrating.config;
 import com.example.bookrating.service.CustomOAuth2UserService;
 import com.example.bookrating.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${frontend.url}")
-    private String frontendUrl;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
     private final JwtUtil jwtUtil;
-
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandle, JwtUtil jwtUtil) {
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandle;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,7 +31,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        // AuthenticationManager를 HttpSecurity에서 빌드하여 빈으로 등록
+        return http.getSharedObject(AuthenticationManagerBuilder.class).build();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        JsonAuthenticationFilter jsonAuthenticationFilter = new JsonAuthenticationFilter("/auth/login", authenticationManager);
+        jsonAuthenticationFilter.setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
 
         http
                 .csrf((auth) -> auth.disable())
@@ -69,21 +69,16 @@ public class SecurityConfig {
 //                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 //                )
 
-                .formLogin(login -> login
-                        .loginPage("/auth/login")
-                        .successHandler(jwtAuthenticationSuccessHandler)
-                )
-
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
-                        .invalidateHttpSession(true)  // 세션 무효화 //여기서 세션 쓰고 있네
                         .deleteCookies("JSESSIONID", "jwt")  //JSESSIONID: 세션 식별 쿠키/jwt : 토큰을 저장하는 쿠키 삭제
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);  //리다이렉트 없이 직접 응답 처리 :  200 상태 코드 설정
                             response.getWriter().flush();  // 응답 본문 비우기 (필요 시 메시지 추가 가능)
                         })
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(jsonAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtAuthenticationFilter(jwtUtil), JsonAuthenticationFilter.class);
 
         return http.build();
     }

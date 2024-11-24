@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
@@ -57,17 +60,17 @@ public class SecurityConfig {
                         .successHandler(jwtAuthenticationSuccessHandler)
                 )
 
-//                //경로별 인가 작업
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/tags","/auth/me","/auth/login").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books").permitAll() //get에 한해서만 적용
-//                        .anyRequest().authenticated()
-//                )
+                //경로별 인가 작업
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/tags","/auth/register","/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books","/books/{id}").permitAll() //get에 한해서만 적용
+                        .anyRequest().authenticated()
+                )
 
-//                // 인증되지 않은 사용자에 대해 로그인페이지로 리다이렉트가 아닌 401 상태 코드 반환
-//                .exceptionHandling((exceptions) -> exceptions
-//                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-//                )
+                // 인증되지 않은 사용자에 대해 로그인페이지로 리다이렉트가 아닌 401 상태 코드 반환
+                .exceptionHandling((exceptions) -> exceptions
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                )
 
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")

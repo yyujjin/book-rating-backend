@@ -92,11 +92,15 @@ public class BookService {
     }
 
     //책 저장
-    public void createBook(BookRequestDTO bookDTO) {
+    public BookResponseDTO createBook(BookRequestDTO bookDTO) {
         Book book = new Book();
         book.setIsbn(bookDTO.getIsbn());
         book.setTitle(bookDTO.getTitle());
         book.setThumbnail(bookDTO.getThumbnail());
+        book.setContents(bookDTO.getContents());
+        book.setDatetime(bookDTO.getDatetime());
+        book.setAuthors(bookDTO.getAuthors());
+        book.setPublisher(bookDTO.getPublisher());
 
         Set<Tag> tags = bookDTO.getTags()
                 .stream()
@@ -104,9 +108,33 @@ public class BookService {
                         .orElseThrow(() -> new IllegalArgumentException("태그를 찾을 수 없습니다. ID: " + tagId)))
                 .collect(Collectors.toSet());
         book.setTags(tags);
-        bookRepository.save(book);
-        log.info("책 저장 완료!");
+        try{
+            Book savedBook =  bookRepository.save(book);
+            BookResponseDTO responseDTO = new BookResponseDTO();
+            responseDTO.setId(savedBook.getId());
+            responseDTO.setIsbn(savedBook.getIsbn());
+            responseDTO.setTitle(savedBook.getTitle());
+            responseDTO.setThumbnail(savedBook.getThumbnail());
+            responseDTO.setContents(savedBook.getContents());
+            responseDTO.setDatetime(savedBook.getDatetime());
+            responseDTO.setAuthors(savedBook.getAuthors());
+            responseDTO.setPublisher(savedBook.getPublisher());
+            Set<Tag> savedTags = savedBook.getTags();
+            List<TagDTO> tagDTOList = new ArrayList<>();
+            for (Tag t : savedTags) {
+                TagDTO tagDTO = new TagDTO();
+                tagDTO.setId(t.getId());
+                tagDTO.setName(t.getName());
+                tagDTOList.add(tagDTO);
+            }
+            responseDTO.setTags(tagDTOList);
+            log.info("책 저장 완료!");
+            return responseDTO;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("저장 중 오류 발생: " + e.getMessage());
+        }
     }
+
 
     //id로 책 찾기
     public Optional<Book> getBookById(Long id) {

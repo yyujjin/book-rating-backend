@@ -52,10 +52,9 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 책입니다.");
         }
 
-        bookService.createBook(bookDTO);
+        BookResponseDTO createdBook =  bookService.createBook(bookDTO);
 
-        //return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.getBookByIsbn(bookDTO.getIsbn()));
+        return ResponseEntity.status(201).body(createdBook);
     }
 
     @PatchMapping("/books/{id}")

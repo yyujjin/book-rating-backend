@@ -10,4 +10,8 @@ public class BookRequestDTO {
     private String title;
     private List<Long> tags;
     private String thumbnail;
+    private String contents;
+    private String datetime;
+    private String authors;
+    private String publisher;
 }

@@ -21,7 +21,11 @@ public class Book {
     private String isbn;
     private String title;
     private double average; //외래키 설정해야하나?
-    private String thumbnail; //책 표지 이미지
+    private String thumbnail;
+    private String contents;
+    private String datetime;
+    private String authors;
+    private String publisher;
 
     @ManyToMany
     @JoinTable(

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +38,11 @@ public class ReviewController {
     public ResponseEntity<List<BookReviewsDTO>> getReviews(@PathVariable Long bookId, @RequestParam(defaultValue = "1") int page) {
         List<BookReviewsDTO> reviews =  reviewService.getReviews(bookId,page);
 
-        if (reviews.isEmpty()) {return ResponseEntity.noContent().build();}
+        if (reviews.isEmpty()) { return ResponseEntity.ok(Collections.emptyList());}
 
         return ResponseEntity.ok().body(reviewService.getReviews(bookId,page));
     }
+
 
     //로그인한 사용자의 리뷰 조회
     @GetMapping("/books/{bookId}/reviews/my-review")
@@ -48,7 +50,7 @@ public class ReviewController {
     public ResponseEntity<?> getReviewsByBookId(@PathVariable("bookId") Long bookId, HttpServletRequest request){
 
         List<ReviewWithUserDTO> review = reviewService.getUserReviewByBookId(bookId,request);
-        if(review.isEmpty()){return ResponseEntity.status(204).build();}
+        if(review.isEmpty()){return ResponseEntity.ok(Collections.emptyList());}
 
         return ResponseEntity.ok().body(review);
     }

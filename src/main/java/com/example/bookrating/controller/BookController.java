@@ -7,6 +7,7 @@ import com.example.bookrating.entity.Book;
 import com.example.bookrating.service.BookService;
 import com.example.bookrating.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -46,7 +47,8 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    @Operation(summary = "책 생성", description = "새로운 책을 등록합니다. ISBN이 중복되면 409 상태 코드를 반환합니다.")
+    @Operation(summary = "책 생성", description = "새로운 책을 등록합니다. ISBN이 중복되면 409 상태 코드를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> createBook(@RequestBody BookRequestDTO bookDTO) {
 
         if (bookService.isDuplicateBook(bookDTO.getIsbn())){
@@ -59,7 +61,8 @@ public class BookController {
     }
 
     @PatchMapping("/books/{id}")
-    @Operation(summary = "책 정보 수정", description = "ID로 책을 조회한 후, 제목을 수정합니다. 존재하지 않는 책이면 400 상태 코드를 반환합니다.")
+    @Operation(summary = "책 정보 수정", description = "ID로 책을 조회한 후, 제목을 수정합니다. 존재하지 않는 책이면 400 상태 코드를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> editBook(@PathVariable Long id,@RequestBody String title) {
         Optional<Book> findBook = bookService.getBookById(id);
         if (findBook.isEmpty()){
@@ -72,7 +75,8 @@ public class BookController {
     }
 
     @DeleteMapping("/books/{id}")
-    @Operation(summary = "책 삭제", description = "ID로 책을 조회한 후 삭제합니다. 삭제하려는 책에 리뷰가 존재하면 400 상태 코드를 반환합니다.")
+    @Operation(summary = "책 삭제", description = "ID로 책을 조회한 후 삭제합니다. 삭제하려는 책에 리뷰가 존재하면 400 상태 코드를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> deleteBook(@PathVariable Long id) {
 
         if (bookService.getBookById(id).isPresent()){

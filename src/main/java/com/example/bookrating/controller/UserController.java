@@ -10,6 +10,7 @@ import com.example.bookrating.repository.UserRepository;
 import com.example.bookrating.service.UserService;
 import com.example.bookrating.util.TokenExtractor;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,19 +38,20 @@ public class UserController {
     public ResponseEntity<?> register (@RequestBody UserDetailsDTO userDetailsDTO) {
         if(userService.findByUsername(userDetailsDTO.getUsername())){return  ResponseEntity.badRequest().build();}
 
-       return  ResponseEntity.ok().body(userService.saveUser(userDetailsDTO));
+       return  ResponseEntity.status(201).body(userService.saveUser(userDetailsDTO));
     }
 
     @PostMapping("/auth/login")
-    @Operation(summary = "로그인", description = "폼 기반 로그인을 처리합니다. 사용자 이름과 비밀번호를 제출하여 로그인합니다.")
-    public ResponseEntity<?> login (@ModelAttribute UserDetailsDTO userDetailsDTO) {
+    @Operation(summary = "로그인", description = "사용자 이름과 비밀번호를 제출하여 로그인 처리 후, 인증 토큰을 반환합니다.")
+    public ResponseEntity<?> login () {
         return  ResponseEntity.ok().body("로그인 완료");
     }
 
     //유저 정보 반환
     @GetMapping("/auth/me")
-    @Operation(summary = "사용자 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다. 포함된 리뷰 목록도 조회됩니다.")
-    public ResponseEntity<UserResponseDTO> login(HttpServletRequest request) {
+    @Operation(summary = "사용자 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다. 포함된 리뷰 목록도 조회됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserResponseDTO> loggedInUser(HttpServletRequest request) {
 
         UserDetailsDTO userDetailsDTO =  tokenExtractor.getUserInfoFromToken(request);
 

@@ -62,7 +62,7 @@ public class SecurityConfig {
 
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/tags","/auth/register","/auth/login").permitAll()
+                        .requestMatchers("/tags","/auth/register","/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/books/*/reviews","/books","/books/{id}").permitAll() //get에 한해서만 적용
                         .anyRequest().authenticated()
                 )

@@ -51,17 +51,17 @@ public class ReviewController {
     }
 
     @PostMapping("/books/{bookId}/reviews")
-    @Operation(summary = "리뷰 등록", description = "특정 책에 대해 별점과 내용을 포함한 리뷰를 등록합니다. 별점은 0에서 5 사이만 가능합니다.")
+    @Operation(summary = "리뷰 등록", description = "특정 책에 대해 별점과 내용을 포함한 리뷰를 등록합니다. 별점은 1에서 5 사이만 가능합니다.")
     public ResponseEntity<?> postReview(@PathVariable("bookId") Long bookId, @RequestBody UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){
 
-        if (userProfileReviewDTO.getRating()<0|| userProfileReviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
+        if (userProfileReviewDTO.getRating()<1|| userProfileReviewDTO.getRating()>5) return ResponseEntity.badRequest().body("0이상 5이하의 별점만 가능합니다.");
         if (userProfileReviewDTO.getContent().isBlank())return ResponseEntity.badRequest().body("내용을 입력해주세요!");
 
         ReviewResponseDTO postedReview = reviewService.postReview(bookId, userProfileReviewDTO,request);
 
-        if (postedReview==null) { return ResponseEntity.badRequest().body("리뷰 등록에 실패하였습니다.");}
+        if (postedReview==null) { return ResponseEntity.status(404).body("리뷰 등록에 실패하였습니다. 해당 책이 존재하지 않습니다. ");}
 
-        return ResponseEntity.ok().body(postedReview);
+        return ResponseEntity.status(201).body(postedReview);
     }
 
     @PatchMapping("books/{bookId}/reviews/{reviewId}")

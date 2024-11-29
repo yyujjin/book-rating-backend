@@ -3,27 +3,27 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # main 브랜치에 푸시될 때 자동 실행
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 우분투 환경에서 실행
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # GitHub 리포지토리에서 코드 체크아웃
+        uses: actions/checkout@v2
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v2  # Java 17을 설치하고, Java 개발 환경을 준비
+        uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: permission for Gradle
+      - name: Permission for Gradle
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build  # Gradle 빌드 실행
+        run: ./gradlew build
 
       - name: Generate .env file
         run: |
@@ -34,14 +34,11 @@ jobs:
           echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
           echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
 
-    #- name: Run tests
-    #  run: ./gradlew test  # 테스트 실행
-
-      - name: Log in to Docker Hub # 도커 로그인
+      - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build . -t book-rating  # Docker 이미지 빌드
+        run: docker build . -t book-rating
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -49,23 +46,54 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/book-rating:v2
 
   deploy:
-    needs: build  # 'build' 작업이 완료된 후 실행
-    runs-on: ubuntu-latest  # 배포 작업도 우분투 환경에서 실행
+    needs: build
+    runs-on: ubuntu-latest
 
     steps:
+      - name: Get GitHub Actions Public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
       - name: Set up SSH private key
         run: |
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-            chmod 600 private_key.pem
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'ap-northeast-2'
+
+      - name: Add GitHub Actions IP to Security Group
+        run: |
+          aws ec2 authorize-security-group-ingress \
+              --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: Pull Docker image from Docker Hub to EC2
         run: |
-          ssh -i private_key.pem ubuntu@ec2-13-125-231-39.ap-northeast-2.compute.amazonaws.com "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
+          ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
 
-      - name: Stop & remove existing container (if exists)
+      - name: Stop & Remove Existing Container
         run: |
-          ssh -i private_key.pem ubuntu@ec2-13-125-231-39.ap-northeast-2.compute.amazonaws.com "sudo docker stop bookrating_v2 || true && sudo docker rm bookrating_v2 || true"
+          ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo docker stop bookrating_v2 || true && sudo docker rm bookrating_v2 || true"
 
-      - name: Run Docker container on EC2
+      - name: Create Docker Network (if not exists)
         run: |
-          ssh -i private_key.pem ubuntu@ec2-13-125-231-39.ap-northeast-2.compute.amazonaws.com "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
+          ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo docker network inspect app-network || sudo docker network create app-network"
+
+      - name: Run Docker Container on EC2
+        run: |
+          ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
+
+      - name: Remove GitHub Actions IP from Security Group
+        run: |
+          aws ec2 revoke-security-group-ingress \
+              --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32

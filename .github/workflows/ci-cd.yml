@@ -25,6 +25,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build  # Gradle 빌드 실행
 
+      - name: Generate .env file
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" > .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+
 #      - name: Run tests
 #        run: ./gradlew test  # 테스트 실행
 

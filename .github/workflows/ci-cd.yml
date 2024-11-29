@@ -41,13 +41,16 @@ jobs:
     #- name: Run tests
     #  run: ./gradlew test  # 테스트 실행
 
+      - name: Log in to Docker Hub # 도커 로그인
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Build Docker image
         run: docker build . -t book-rating  # Docker 이미지 빌드
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker tag book-rating yyujjin1204/book-rating:v2
-          docker push yyujjin1204/book-rating:v2
+          docker tag book-rating ${{ secrets.DOCKER_USERNAME }}/book-rating:v2
+          docker push ${{ secrets.DOCKER_USERNAME }}/book-rating:v2
 
   deploy:
     needs: build  # 'build' 작업이 완료된 후 실행
@@ -61,7 +64,7 @@ jobs:
 
       - name: Pull Docker image from Docker Hub to EC2ㅎ
         run: |
-          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker pull yyujjin1204/book-rating:v2"
+          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
 
       - name: Stop & remove existing container (if exists)
         run: |
@@ -69,5 +72,5 @@ jobs:
 
       - name: Run Docker container on EC2
         run: |
-          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d yyujjin1204/book-rating:v2"
+          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"
 

@@ -78,6 +78,12 @@ jobs:
               --port 22 \
               --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
+      - name: Test SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "echo 'SSH Connection Successful!'"
+
+
+
       - name: Pull Docker image from Docker Hub to EC2
         run: |
           ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/book-rating:v2"

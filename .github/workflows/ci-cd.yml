@@ -57,3 +57,4 @@ jobs:
       - name: Run Docker container on EC2
         run: |
           ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d yyujjin1204/book-rating:v2"
+

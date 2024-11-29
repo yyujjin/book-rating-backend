@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-java@v2  # Java 17을 설치하고, Java 개발 환경을 준비
         with:
           java-version: '17'
+          distribution: 'temurin'
 
       - name: Build with Gradle
         run: ./gradlew build  # Gradle 빌드 실행
@@ -44,12 +45,12 @@ jobs:
 
       - name: Pull Docker image from Docker Hub to EC2ㅎ
         run: |
-          ssh -i private_key.pem ec2-user@<your-ec2-ip> "sudo docker pull yyujjin1204/book-rating:v2"
+          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker pull yyujjin1204/book-rating:v2"
 
       - name: Stop & remove existing container (if exists)
         run: |
-          ssh -i private_key.pem ec2-user@<your-ec2-ip> "sudo docker stop bookrating_v2 || true && sudo docker rm bookrating_v2 || true"
+          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker stop bookrating_v2 || true && sudo docker rm bookrating_v2 || true"
 
       - name: Run Docker container on EC2
         run: |
-          ssh -i private_key.pem ec2-user@<your-ec2-ip> "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d yyujjin1204/book-rating:v2"
+          ssh -i private_key.pem ec2-user@13.125.231.39 "sudo docker run --cpus='.3' --name bookrating_v2 --network app-network -p 8080:8080 -e DB_URL='jdbc:mysql://bookdb:3306/bookrating?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true' -d yyujjin1204/book-rating:v2"

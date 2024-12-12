@@ -92,9 +92,8 @@ public class ReviewService {
     public ReviewResponseDTO postReview(Long bookId, UserProfileReviewDTO userProfileReviewDTO, HttpServletRequest request){
 
         Review review = new Review();
-        //토큰에서 유저 구글 고유아이디 가져옴
+        //토큰에서 유저 이름 가져옴
         UserDetailsDTO userDetailsDTO = tokenExtractor.getUserInfoFromToken(request);
-
         //guest 인 경우 (토큰 x)
         if(userDetailsDTO ==null) {
             review.setUserId(0L);
@@ -102,7 +101,7 @@ public class ReviewService {
         //로그인 유저 (토큰 O)
         if(userDetailsDTO !=null){
             //db에서 유저 정보 가져옴
-            UserEntity user = userRepository.findByProviderId(userDetailsDTO.getProviderId());
+            UserEntity user = userRepository.findByUsername(userDetailsDTO.getUsername()).get();
             if(user!=null) {
                 review.setUsername(user.getUsername());
                 review.setUserId(user.getId());
